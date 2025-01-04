@@ -1,34 +1,88 @@
-"use client"; // Diese Zeile macht die Komponente clientseitig
+"use client";
 
-import { useRouter } from 'next/navigation'; // Neuer Import für den App-Router
-import { logout } from '../src/firebase'; // Dein Logout
+import { useRouter } from "next/navigation";
+import { logout } from "../src/firebase"; // Dein Logout
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth"; // Firebase Auth Listener
+import { auth, db } from "../src/firebase"; // Firebase-Instanz
+import { doc, setDoc, getDoc } from "firebase/firestore"; // Firestore-Funktionen
 
-const Navbar = ({ user }) => {
+const Navbar = () => {
   const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  // Überprüfe den Authentifizierungsstatus
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        // Benutzer authentifiziert, Profil in Firestore prüfen
+        const userRef = doc(db, "users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if (!userDoc.exists()) {
+          // Benutzerprofil erstellen, falls es nicht existiert
+          await setDoc(userRef, {
+            name: "Neuer Benutzer",
+            email: currentUser.email,
+            photoURL: currentUser.photoURL || null,
+          });
+        }
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => unsubscribe(); // Aufräumen, wenn die Komponente entladen wird
+  }, []);
 
   const handleLogout = async () => {
     await logout();
-    router.push('/auth/login'); // Weiterleitung nach dem Logout
+    alert("Erfolgreich abgemeldet!");
+    router.push("/auth/login"); // Weiterleitung zur Login-Seite nach Logout
   };
 
   return (
-    <nav style={{ padding: '10px', backgroundColor: '#333', color: '#fff', display: 'flex', justifyContent: 'space-between' }}>
+    <nav
+      style={{
+        padding: "10px",
+        backgroundColor: "#333",
+        color: "#fff",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
       <div>
-        <h1 style={{ margin: 0, cursor: 'pointer' }} onClick={() => router.push('/')}>
+        <h1
+          style={{ margin: 0, cursor: "pointer" }}
+          onClick={() => router.push("/")}
+        >
           SocialConnect
         </h1>
       </div>
       <div>
         {user ? (
           <>
-            <span style={{ marginRight: '10px' }}>Willkommen, {user.email}</span>
             <button
               style={{
-                color: '#fff',
-                backgroundColor: '#555',
-                padding: '5px 10px',
-                border: 'none',
-                cursor: 'pointer',
+                marginRight: "10px",
+                color: "#fff",
+                backgroundColor: "#555",
+                padding: "5px 10px",
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => router.push(`/profile/${user.uid}`)}
+            >
+              Profil
+            </button>
+            <button
+              style={{
+                color: "#fff",
+                backgroundColor: "#555",
+                padding: "5px 10px",
+                border: "none",
+                cursor: "pointer",
               }}
               onClick={handleLogout}
             >
@@ -39,27 +93,27 @@ const Navbar = ({ user }) => {
           <>
             <button
               style={{
-                marginLeft: '10px',
-                color: '#fff',
-                backgroundColor: '#555',
-                padding: '5px 10px',
-                border: 'none',
-                cursor: 'pointer',
+                marginLeft: "10px",
+                color: "#fff",
+                backgroundColor: "#555",
+                padding: "5px 10px",
+                border: "none",
+                cursor: "pointer",
               }}
-              onClick={() => router.push('/auth/login')} // Korrigierter Pfad
+              onClick={() => router.push("/auth/login")}
             >
               Login
             </button>
             <button
               style={{
-                marginLeft: '10px',
-                color: '#fff',
-                backgroundColor: '#555',
-                padding: '5px 10px',
-                border: 'none',
-                cursor: 'pointer',
+                marginLeft: "10px",
+                color: "#fff",
+                backgroundColor: "#555",
+                padding: "5px 10px",
+                border: "none",
+                cursor: "pointer",
               }}
-              onClick={() => router.push('/auth/register')} // Korrigierter Pfad
+              onClick={() => router.push("/auth/register")}
             >
               Register
             </button>
