@@ -50,6 +50,7 @@ const Navbar = () => {
         color: "#fff",
         display: "flex",
         justifyContent: "space-between",
+        alignItems: "center",
       }}
     >
       <div>
@@ -75,6 +76,19 @@ const Navbar = () => {
               onClick={() => router.push(`/profile/${user.uid}`)}
             >
               Profil
+            </button>
+            <button
+              style={{
+                marginRight: "10px",
+                color: "#fff",
+                backgroundColor: "#555",
+                padding: "5px 10px",
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => router.push("/friends")}
+            >
+              Freunde
             </button>
             <button
               style={{

@@ -9,6 +9,8 @@ export default function Home() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [commentText, setCommentText] = useState({});
+  const [editComment, setEditComment] = useState(null); // Bearbeitungsmodus
+  const [updatedCommentText, setUpdatedCommentText] = useState(""); // Neuer Kommentartext
 
   // Überprüfen, ob der Benutzer eingeloggt ist
   useEffect(() => {
@@ -21,23 +23,34 @@ export default function Home() {
 
   // Beiträge aus Firestore abrufen
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchPosts = () => {
       const postsCollection = collection(db, "posts");
       const q = query(postsCollection, orderBy("createdAt", "desc"));
-
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const postsData = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+  
+      const unsubscribe = onSnapshot(q, async (snapshot) => {
+        const postsData = await Promise.all(
+          snapshot.docs.map(async (postDoc) => {
+            const post = postDoc.data();
+            const userRef = doc(db, "users", post.authorId); // Sicherstellen, dass `doc` korrekt verwendet wird
+            const userSnap = await getDoc(userRef);
+            const username = userSnap.exists() ? userSnap.data().name : "Unbekannt";
+  
+            return {
+              id: postDoc.id,
+              ...post,
+              authorName: username, // username als authorName
+            };
+          })
+        );
         setPosts(postsData);
       });
-
+  
       return () => unsubscribe();
     };
-
+  
     fetchPosts();
   }, []);
+  
 
   // Like/Dislike-Handler
   const handleVote = async (postId, type) => {
@@ -50,7 +63,7 @@ export default function Home() {
     const userId = user.uid;
 
     try {
-      const postSnapshot = await getDoc(postRef); // Daten des Dokuments abrufen
+      const postSnapshot = await getDoc(postRef);
       const postData = postSnapshot.data();
 
       const likes = postData.likes || [];
@@ -59,12 +72,12 @@ export default function Home() {
       if (type === "like" && !likes.includes(userId)) {
         await updateDoc(postRef, {
           likes: arrayUnion(userId),
-          dislikes: arrayRemove(userId), // Entfernt ein Dislike, falls vorhanden
+          dislikes: arrayRemove(userId),
         });
       } else if (type === "dislike" && !dislikes.includes(userId)) {
         await updateDoc(postRef, {
           dislikes: arrayUnion(userId),
-          likes: arrayRemove(userId), // Entfernt ein Like, falls vorhanden
+          likes: arrayRemove(userId),
         });
       }
     } catch (err) {
@@ -73,38 +86,71 @@ export default function Home() {
   };
 
   // Kommentar-Handler
-const handleComment = async (postId) => {
-  if (!user) {
-    alert("Bitte melde dich an, um einen Kommentar zu schreiben.");
-    return;
-  }
-
-  try {
-    // Benutzerinformationen aus der `users`-Sammlung abrufen
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    const username = userDoc.exists() && userDoc.data().name ? userDoc.data().name : "Unbekannt";
-    const profileImage = userDoc.exists() && userDoc.data().profileImage ? userDoc.data().profileImage : null;
-
-    if (!commentText[postId] || commentText[postId].trim() === "") {
-      alert("Kommentartext darf nicht leer sein.");
+  const handleComment = async (postId) => {
+    if (!user) {
+      alert("Bitte melde dich an, um einen Kommentar zu schreiben.");
       return;
     }
 
-    const postRef = doc(db, "posts", postId);
-    await updateDoc(postRef, {
-      comments: arrayUnion({
-        text: commentText[postId].trim(),
-        username,
-        profileImage,
-        createdAt: new Date().toISOString(),
-      }),
-    });
-    setCommentText((prev) => ({ ...prev, [postId]: "" })); // Kommentar-Feld zurücksetzen
-  } catch (err) {
-    console.error("Fehler beim Hinzufügen eines Kommentars:", err);
-  }
-};
+    try {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const username = userDoc.exists() && userDoc.data().name ? userDoc.data().name : "Unbekannt";
+      const profileImage = userDoc.exists() && userDoc.data().profileImage ? userDoc.data().profileImage : null;
 
+      if (!commentText[postId] || commentText[postId].trim() === "") {
+        alert("Kommentartext darf nicht leer sein.");
+        return;
+      }
+
+      const postRef = doc(db, "posts", postId);
+      await updateDoc(postRef, {
+        comments: arrayUnion({
+          text: commentText[postId].trim(),
+          username,
+          profileImage,
+          userId: user.uid,
+          createdAt: new Date().toISOString(),
+        }),
+      });
+      setCommentText((prev) => ({ ...prev, [postId]: "" }));
+    } catch (err) {
+      console.error("Fehler beim Hinzufügen eines Kommentars:", err);
+    }
+  };
+
+  // Kommentar bearbeiten
+  const handleEditComment = async (postId, comment) => {
+    const postRef = doc(db, "posts", postId);
+    try {
+      const updatedComments = posts
+        .find((post) => post.id === postId)
+        .comments.map((c) =>
+          c.createdAt === comment.createdAt && c.userId === comment.userId
+            ? { ...c, text: updatedCommentText }
+            : c
+        );
+
+      await updateDoc(postRef, {
+        comments: updatedComments,
+      });
+
+      setEditComment(null);
+    } catch (err) {
+      console.error("Fehler beim Bearbeiten eines Kommentars:", err);
+    }
+  };
+
+  // Kommentar löschen
+  const handleDeleteComment = async (postId, comment) => {
+    const postRef = doc(db, "posts", postId);
+    try {
+      await updateDoc(postRef, {
+        comments: arrayRemove(comment),
+      });
+    } catch (err) {
+      console.error("Fehler beim Löschen eines Kommentars:", err);
+    }
+  };
 
   return (
     <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
@@ -140,74 +186,56 @@ const handleComment = async (postId) => {
                   />
                 )}
                 <p style={{ color: "#555", fontSize: "12px" }}>
-                  Gepostet von {post.username || "Unbekannt"} am{" "}
+                  Ersteller: <strong>{post.authorName}</strong> | Erstellt am:{" "}
                   {post.createdAt?.seconds
                     ? new Date(post.createdAt.seconds * 1000).toLocaleString()
-                    : "Gerade eben"}
+                    : "Unbekannt"}
                 </p>
-                <div style={{ marginTop: "10px" }}>
-                  <button
-                    onClick={() => handleVote(post.id, "like")}
-                    style={{
-                      marginRight: "10px",
-                      padding: "5px 10px",
-                      border: "none",
-                      backgroundColor: "#4CAF50",
-                      color: "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    👍 {post.likes?.length || 0}
-                  </button>
-                  <button
-                    onClick={() => handleVote(post.id, "dislike")}
-                    style={{
-                      marginRight: "10px",
-                      padding: "5px 10px",
-                      border: "none",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    👎 {post.dislikes?.length || 0}
-                  </button>
-                </div>
-                <div style={{ marginTop: "10px" }}>
+                <div>
                   <h4>Kommentare:</h4>
-                  <ul style={{ padding: 0, listStyleType: "none" }}>
+                  <ul>
                     {post.comments?.map((comment, index) => (
-                      <li
-                        key={index}
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          marginBottom: "10px",
-                          padding: "10px",
-                          border: "1px solid #ddd",
-                          borderRadius: "5px",
-                        }}
-                      >
-                        {comment.profileImage && (
-                          <img
-                            src={comment.profileImage}
-                            alt="Profilbild"
-                            style={{
-                              width: "40px",
-                              height: "40px",
-                              borderRadius: "50%",
-                              marginRight: "10px",
-                            }}
-                          />
-                        )}
-                        <div>
-                          <strong>{comment.username}</strong>
-                          <p style={{ margin: 0 }}>{comment.text}</p>
-                          <span style={{ fontSize: "12px", color: "#555" }}>
-                            {new Date(comment.createdAt).toLocaleString()}
-                          </span>
+                      <li key={index} style={{ marginBottom: "10px" }}>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                          {comment.profileImage && (
+                            <img
+                              src={comment.profileImage}
+                              alt="Profilbild"
+                              style={{
+                                width: "40px",
+                                height: "40px",
+                                borderRadius: "50%",
+                                marginRight: "10px",
+                              }}
+                            />
+                          )}
+                          <div>
+                            <strong>{comment.username}</strong>
+                            {editComment === comment.createdAt ? (
+                              <input
+                                type="text"
+                                value={updatedCommentText}
+                                onChange={(e) => setUpdatedCommentText(e.target.value)}
+                                style={{ marginLeft: "10px" }}
+                              />
+                            ) : (
+                              <p>{comment.text}</p>
+                            )}
+                          </div>
+                          {comment.userId === user.uid && (
+                            <div style={{ marginLeft: "auto", cursor: "pointer" }}>
+                              <button
+                                onClick={() =>
+                                  editComment
+                                    ? handleEditComment(post.id, comment)
+                                    : setEditComment(comment.createdAt)
+                                }
+                              >
+                                ✏️
+                              </button>
+                              <button onClick={() => handleDeleteComment(post.id, comment)}>🗑️</button>
+                            </div>
+                          )}
                         </div>
                       </li>
                     ))}
@@ -222,38 +250,15 @@ const handleComment = async (postId) => {
                       }))
                     }
                     placeholder="Einen Kommentar schreiben..."
-                    style={{
-                      width: "100%",
-                      padding: "8px",
-                      marginTop: "10px",
-                      border: "1px solid #ccc",
-                      borderRadius: "5px",
-                    }}
                   />
-                  <button
-                    onClick={() => handleComment(post.id)}
-                    style={{
-                      marginTop: "5px",
-                      padding: "5px 10px",
-                      border: "none",
-                      backgroundColor: "#007BFF",
-                      color: "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Senden
-                  </button>
+                  <button onClick={() => handleComment(post.id)}>Senden</button>
                 </div>
               </div>
             ))
           )}
         </>
       ) : (
-        <div>
-          <h1>Willkommen bei SocialConnect!</h1>
-          <p>Bitte registriere dich oder logge dich ein, um loszulegen.</p>
-        </div>
+        <p>Bitte melde dich an.</p>
       )}
     </div>
   );

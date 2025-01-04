@@ -4,51 +4,36 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { auth, db } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { onAuthStateChanged } from "firebase/auth";
 
-export default function ProfilePage({ params }) {
+export default function ProfilePage() {
   const [id, setId] = useState(""); // Benutzer-ID
   const [profile, setProfile] = useState(null);
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
   const [photoURL, setPhotoURL] = useState("");
-  const [newPhoto, setNewPhoto] = useState(null);
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Firebase Storage initialisieren
-  const storage = getStorage();
-
-  // Benutzer-ID aus params extrahieren
-  useEffect(() => {
-    const resolveParams = async () => {
-      try {
-        const resolvedParams = await params; // Promise auflösen
-        setId(resolvedParams.id);
-      } catch (err) {
-        console.error("Fehler beim Entpacken von params:", err);
-      }
-    };
-    resolveParams();
-  }, [params]);
-
-  // Authentifizierten Benutzer überprüfen
+  // Benutzer-Authentifizierung prüfen
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
         router.push("/auth/login");
+      } else {
+        setId(currentUser.uid);
       }
     });
+
     return () => unsubscribe();
   }, [router]);
 
   // Benutzerprofil aus Firestore abrufen
   useEffect(() => {
     const fetchProfile = async () => {
-      try {
-        if (!id) return;
+      if (!id) return;
 
+      try {
         const docRef = doc(db, "users", id);
         const docSnap = await getDoc(docRef);
 
@@ -57,7 +42,7 @@ export default function ProfilePage({ params }) {
           setProfile(data);
           setName(data.name || "");
           setBio(data.bio || "");
-          setPhotoURL(data.photoURL || "");
+          setPhotoURL(data.photoURL || ""); // Falls kein Profilbild vorhanden
         } else {
           setError("Profil nicht gefunden.");
         }
@@ -69,25 +54,18 @@ export default function ProfilePage({ params }) {
     fetchProfile();
   }, [id]);
 
+  // Profil aktualisieren
   const handleUpdate = async () => {
     try {
       const docRef = doc(db, "users", id);
 
-      let updatedPhotoURL = photoURL;
-      if (newPhoto) {
-        const photoRef = ref(storage, `profiles/${id}`);
-        await uploadBytes(photoRef, newPhoto);
-        updatedPhotoURL = await getDownloadURL(photoRef);
-      }
-
       await updateDoc(docRef, {
         name,
         bio,
-        photoURL: updatedPhotoURL,
+        photoURL, // Direkt den Link speichern
       });
 
-      setPhotoURL(updatedPhotoURL);
-      alert("Profil aktualisiert!");
+      alert("Profil erfolgreich aktualisiert!");
     } catch (err) {
       setError(err.message);
     }
@@ -111,10 +89,11 @@ export default function ProfilePage({ params }) {
           style={{ width: "150px", height: "150px", borderRadius: "50%" }}
         />
         <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setNewPhoto(e.target.files[0])}
-          style={{ display: "block", margin: "10px auto" }}
+          type="url"
+          placeholder="Profilbild-URL eingeben"
+          value={photoURL}
+          onChange={(e) => setPhotoURL(e.target.value)}
+          style={{ display: "block", marginTop: "10px", width: "100%", padding: "8px" }}
         />
       </div>
       <div style={{ marginBottom: "10px" }}>
@@ -149,7 +128,7 @@ export default function ProfilePage({ params }) {
         Profil aktualisieren
       </button>
       <button
-        onClick={() => router.push("/posts/create")}
+        onClick={() => router.push("/posts/create")} // Weiterleitung zur Post-Erstellung
         style={{
           width: "100%",
           padding: "10px",
@@ -163,7 +142,7 @@ export default function ProfilePage({ params }) {
         Neuen Beitrag erstellen
       </button>
       <button
-        onClick={() => router.push("/feed")}
+        onClick={() => router.push("/feed")} // Weiterleitung zur "Meine Posts"-Seite
         style={{
           width: "100%",
           padding: "10px",
