@@ -20,8 +20,8 @@ export default function FriendsPage() {
   const [user, setUser] = useState(null);
   const [friendRequests, setFriendRequests] = useState([]);
   const [friends, setFriends] = useState([]);
-  const [users, setUsers] = useState([]); // Liste aller Benutzer
-  const [sentRequests, setSentRequests] = useState([]); // Gesendete Anfragen
+  const [users, setUsers] = useState([]);
+  const [sentRequests, setSentRequests] = useState([]);
 
   // Überprüfen, ob der Benutzer eingeloggt ist
   useEffect(() => {
@@ -39,11 +39,13 @@ export default function FriendsPage() {
 
       const unsubscribe = onSnapshot(usersCollection, (snapshot) => {
         const usersData = snapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          .filter((u) => u.name !== "Max Mustermann"); // "Max Mustermann" entfernen
+          ? snapshot.docs
+              .map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+              }))
+              .filter((u) => u.name !== "Max Mustermann")
+          : [];
         setUsers(usersData);
       });
 
@@ -65,19 +67,29 @@ export default function FriendsPage() {
 
     const unsubscribe = onSnapshot(requestsQuery, async (snapshot) => {
       const requests = await Promise.all(
-        snapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          const senderDoc = await getDoc(doc(db, "users", data.senderId));
-          const senderName = senderDoc.exists() ? senderDoc.data().name : "Unbekannt";
+        snapshot.docs.map(async (document) => {
+          try {
+            const data = document.data();
+            if (!data.senderId) throw new Error("Sender ID fehlt.");
 
-          return {
-            id: doc.id,
-            senderName,
-            ...data,
-          };
+            const senderRef = doc(db, "users", data.senderId); // Verwende die `doc` Funktion korrekt
+            const senderDoc = await getDoc(senderRef);
+            const senderName = senderDoc.exists()
+              ? senderDoc.data().name
+              : "Unbekannt";
+
+            return {
+              id: document.id,
+              senderName,
+              ...data,
+            };
+          } catch (error) {
+            console.error("Fehler beim Abrufen einer Anfrage:", error);
+            return null;
+          }
         })
       );
-      setFriendRequests(requests);
+      setFriendRequests(requests.filter((r) => r !== null));
     });
 
     return () => unsubscribe();
@@ -95,21 +107,31 @@ export default function FriendsPage() {
 
     const unsubscribe = onSnapshot(friendsQuery, async (snapshot) => {
       const friendsData = await Promise.all(
-        snapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          const friendId =
-            data.senderId === user.uid ? data.receiverId : data.senderId;
-          const friendDoc = await getDoc(doc(db, "users", friendId));
-          const friendName = friendDoc.exists() ? friendDoc.data().name : "Unbekannt";
+        snapshot.docs.map(async (document) => {
+          try {
+            const data = document.data();
+            const friendId =
+              data.senderId === user.uid ? data.receiverId : data.senderId;
+            if (!friendId) throw new Error("Friend ID fehlt.");
 
-          return {
-            id: doc.id,
-            friendName,
-            friendId,
-          };
+            const friendRef = doc(db, "users", friendId);
+            const friendDoc = await getDoc(friendRef);
+            const friendName = friendDoc.exists()
+              ? friendDoc.data().name
+              : "Unbekannt";
+
+            return {
+              id: document.id,
+              friendName,
+              friendId,
+            };
+          } catch (error) {
+            console.error("Fehler beim Abrufen eines Freundes:", error);
+            return null;
+          }
         })
       );
-      setFriends(friendsData);
+      setFriends(friendsData.filter((f) => f !== null));
     });
 
     return () => unsubscribe();
@@ -126,7 +148,9 @@ export default function FriendsPage() {
     );
 
     const unsubscribe = onSnapshot(sentQuery, (snapshot) => {
-      const requests = snapshot.docs.map((doc) => doc.data().receiverId);
+      const requests = snapshot.docs
+        ? snapshot.docs.map((doc) => doc.data().receiverId)
+        : [];
       setSentRequests(requests);
     });
 
@@ -149,7 +173,9 @@ export default function FriendsPage() {
       sentRequests.includes(receiverId) ||
       friends.some((f) => f.friendId === receiverId)
     ) {
-      alert("Freundschaftsanfrage bereits gesendet oder ihr seid schon Freunde.");
+      alert(
+        "Freundschaftsanfrage bereits gesendet oder ihr seid schon Freunde."
+      );
       return;
     }
 
@@ -212,7 +238,7 @@ export default function FriendsPage() {
             ) : (
               <ul style={{ listStyleType: "none", padding: 0 }}>
                 {users
-                  .filter((u) => u.id !== user.uid) // Aktuellen Benutzer ausschließen
+                  .filter((u) => u.id !== user.uid)
                   .map((u) => (
                     <li
                       key={u.id}
@@ -241,7 +267,13 @@ export default function FriendsPage() {
                         <p style={{ margin: 0, fontWeight: "bold" }}>
                           {u.name || "Unbekannt"}
                         </p>
-                        <p style={{ margin: 0, fontSize: "12px", color: "#555" }}>
+                        <p
+                          style={{
+                            margin: 0,
+                            fontSize: "12px",
+                            color: "#555",
+                          }}
+                        >
                           {u.email}
                         </p>
                       </div>
