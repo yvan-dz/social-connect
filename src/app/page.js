@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { auth, db } from "./firebase"; // Firebase-Instanz importieren
+import { auth, db } from "firebase"; // Firebase-Instanz importieren
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, query, onSnapshot, orderBy, addDoc, serverTimestamp } from "firebase/firestore";
 
