@@ -12,6 +12,7 @@ import {
   updateDoc,
   doc,
   serverTimestamp,
+  getDoc,
 } from "firebase/firestore";
 
 export default function FriendsPage() {
@@ -50,7 +51,7 @@ export default function FriendsPage() {
     fetchUsers();
   }, []);
 
-  // Freundschaftsanfragen abrufen
+  // Freundschaftsanfragen abrufen und Benutzernamen hinzufügen
   useEffect(() => {
     if (!user) return;
 
@@ -60,18 +61,28 @@ export default function FriendsPage() {
       where("status", "==", "pending")
     );
 
-    const unsubscribe = onSnapshot(requestsQuery, (snapshot) => {
-      const requests = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+    const unsubscribe = onSnapshot(requestsQuery, async (snapshot) => {
+      const requests = await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const senderDoc = await getDoc(doc(db, "users", data.senderId));
+          const senderName = senderDoc.exists() ? senderDoc.data().name : "Unbekannt";
+
+          return {
+            id: doc.id,
+            senderName,
+            senderId: data.senderId,
+            ...data,
+          };
+        })
+      );
       setFriendRequests(requests);
     });
 
     return () => unsubscribe();
   }, [user]);
 
-  // Freunde abrufen
+  // Freunde abrufen und Benutzernamen hinzufügen
   useEffect(() => {
     if (!user) return;
 
@@ -81,11 +92,22 @@ export default function FriendsPage() {
       where("receiverId", "==", user.uid)
     );
 
-    const unsubscribe = onSnapshot(friendsQuery, (snapshot) => {
-      const friendsData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+    const unsubscribe = onSnapshot(friendsQuery, async (snapshot) => {
+      const friendsData = await Promise.all(
+        snapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const friendId =
+            data.senderId === user.uid ? data.receiverId : data.senderId;
+          const friendDoc = await getDoc(doc(db, "users", friendId));
+          const friendName = friendDoc.exists() ? friendDoc.data().name : "Unbekannt";
+
+          return {
+            id: doc.id,
+            friendName,
+            ...data,
+          };
+        })
+      );
       setFriends(friendsData);
     });
 
@@ -229,7 +251,7 @@ export default function FriendsPage() {
                   }}
                 >
                   <p>
-                    Anfrage von: <strong>{request.senderId}</strong>
+                    Anfrage von: <strong>{request.senderName}</strong>
                   </p>
                   <button
                     onClick={() => handleFriendRequest(request.id, "accepted")}
@@ -279,12 +301,7 @@ export default function FriendsPage() {
                     borderRadius: "5px",
                   }}
                 >
-                  <p>
-                    Freund:{" "}
-                    {friend.senderId === user.uid
-                      ? friend.receiverId
-                      : friend.senderId}
-                  </p>
+                  <p>Freund: {friend.friendName}</p>
                 </div>
               ))
             )}
