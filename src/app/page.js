@@ -91,23 +91,21 @@ export default function Home() {
       alert("Bitte melde dich an, um einen Kommentar zu schreiben.");
       return;
     }
-
+  
     try {
       const userDoc = await getDoc(doc(db, "users", user.uid));
       const username = userDoc.exists() && userDoc.data().name ? userDoc.data().name : "Unbekannt";
-      const profileImage = userDoc.exists() && userDoc.data().profileImage ? userDoc.data().profileImage : null;
-
+  
       if (!commentText[postId] || commentText[postId].trim() === "") {
         alert("Kommentartext darf nicht leer sein.");
         return;
       }
-
+  
       const postRef = doc(db, "posts", postId);
       await updateDoc(postRef, {
         comments: arrayUnion({
           text: commentText[postId].trim(),
           username,
-          profileImage,
           userId: user.uid,
           createdAt: new Date().toISOString(),
         }),
@@ -117,6 +115,7 @@ export default function Home() {
       console.error("Fehler beim Hinzufügen eines Kommentars:", err);
     }
   };
+  
 
   // Kommentar bearbeiten
   const handleEditComment = async (postId, comment) => {
