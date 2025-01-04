@@ -8,7 +8,7 @@ const Navbar = ({ user }) => {
 
   const handleLogout = async () => {
     await logout();
-    router.push('pages/auth/login'); // Weiterleitung nach dem Logout
+    router.push('src/app/auth/login'); // Weiterleitung nach dem Logout
   };
 
   return (
@@ -33,13 +33,13 @@ const Navbar = ({ user }) => {
           <>
             <button
               style={{ marginLeft: '10px', color: '#fff', backgroundColor: '#555', padding: '5px 10px', border: 'none', cursor: 'pointer' }}
-              onClick={() => router.push('pages/auth/login')}
+              onClick={() => router.push('src/app/auth/login')}
             >
               Login
             </button>
             <button
               style={{ marginLeft: '10px', color: '#fff', backgroundColor: '#555', padding: '5px 10px', border: 'none', cursor: 'pointer' }}
-              onClick={() => router.push('pages/auth/register')}
+              onClick={() => router.push('src/app/auth/register')}
             >
               Register
             </button>
