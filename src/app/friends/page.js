@@ -11,6 +11,7 @@ import {
   addDoc,
   updateDoc,
   doc,
+  deleteDoc,
   serverTimestamp,
   getDoc,
 } from "firebase/firestore";
@@ -20,6 +21,7 @@ export default function FriendsPage() {
   const [friendRequests, setFriendRequests] = useState([]);
   const [friends, setFriends] = useState([]);
   const [users, setUsers] = useState([]); // Liste aller Benutzer
+  const [sentRequests, setSentRequests] = useState([]); // Gesendete Anfragen
 
   // Überprüfen, ob der Benutzer eingeloggt ist
   useEffect(() => {
@@ -41,7 +43,7 @@ export default function FriendsPage() {
             id: doc.id,
             ...doc.data(),
           }))
-          .filter((u) => u.name !== "Max Mustermann"); // Max Mustermann entfernen
+          .filter((u) => u.name !== "Max Mustermann"); // "Max Mustermann" entfernen
         setUsers(usersData);
       });
 
@@ -51,7 +53,7 @@ export default function FriendsPage() {
     fetchUsers();
   }, []);
 
-  // Freundschaftsanfragen abrufen und Benutzernamen hinzufügen
+  // Freundschaftsanfragen abrufen
   useEffect(() => {
     if (!user) return;
 
@@ -71,7 +73,6 @@ export default function FriendsPage() {
           return {
             id: doc.id,
             senderName,
-            senderId: data.senderId,
             ...data,
           };
         })
@@ -82,7 +83,7 @@ export default function FriendsPage() {
     return () => unsubscribe();
   }, [user]);
 
-  // Freunde abrufen und Benutzernamen hinzufügen
+  // Freunde abrufen
   useEffect(() => {
     if (!user) return;
 
@@ -104,11 +105,29 @@ export default function FriendsPage() {
           return {
             id: doc.id,
             friendName,
-            ...data,
+            friendId,
           };
         })
       );
       setFriends(friendsData);
+    });
+
+    return () => unsubscribe();
+  }, [user]);
+
+  // Gesendete Freundschaftsanfragen abrufen
+  useEffect(() => {
+    if (!user) return;
+
+    const sentQuery = query(
+      collection(db, "friendships"),
+      where("senderId", "==", user.uid),
+      where("status", "==", "pending")
+    );
+
+    const unsubscribe = onSnapshot(sentQuery, (snapshot) => {
+      const requests = snapshot.docs.map((doc) => doc.data().receiverId);
+      setSentRequests(requests);
     });
 
     return () => unsubscribe();
@@ -123,6 +142,14 @@ export default function FriendsPage() {
 
     if (!user) {
       alert("Bitte melde dich an, um eine Freundschaftsanfrage zu senden.");
+      return;
+    }
+
+    if (
+      sentRequests.includes(receiverId) ||
+      friends.some((f) => f.friendId === receiverId)
+    ) {
+      alert("Freundschaftsanfrage bereits gesendet oder ihr seid schon Freunde.");
       return;
     }
 
@@ -154,6 +181,20 @@ export default function FriendsPage() {
       );
     } catch (err) {
       console.error("Fehler beim Beantworten der Anfrage:", err);
+    }
+  };
+
+  // Freundschaft entfernen
+  const removeFriend = async (friendId) => {
+    try {
+      const friendDoc = friends.find((f) => f.friendId === friendId);
+      if (friendDoc) {
+        const friendshipRef = doc(db, "friendships", friendDoc.id);
+        await deleteDoc(friendshipRef);
+        alert("Freund entfernt!");
+      }
+    } catch (err) {
+      console.error("Fehler beim Entfernen eines Freundes:", err);
     }
   };
 
@@ -197,21 +238,10 @@ export default function FriendsPage() {
                         />
                       )}
                       <div style={{ flex: 1 }}>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontWeight: "bold",
-                          }}
-                        >
+                        <p style={{ margin: 0, fontWeight: "bold" }}>
                           {u.name || "Unbekannt"}
                         </p>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: "12px",
-                            color: "#555",
-                          }}
-                        >
+                        <p style={{ margin: 0, fontSize: "12px", color: "#555" }}>
                           {u.email}
                         </p>
                       </div>
@@ -301,7 +331,22 @@ export default function FriendsPage() {
                     borderRadius: "5px",
                   }}
                 >
-                  <p>Freund: {friend.friendName}</p>
+                  <p>
+                    Freund: <strong>{friend.friendName}</strong>
+                  </p>
+                  <button
+                    onClick={() => removeFriend(friend.friendId)}
+                    style={{
+                      padding: "5px 10px",
+                      border: "none",
+                      backgroundColor: "#FF0000",
+                      color: "white",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    Entfernen
+                  </button>
                 </div>
               ))
             )}
