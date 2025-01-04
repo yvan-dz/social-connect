@@ -8,7 +8,7 @@ const Navbar = ({ user }) => {
 
   const handleLogout = async () => {
     await logout();
-    router.push('src/app/auth/login'); // Weiterleitung nach dem Logout
+    router.push('/auth/login'); // Weiterleitung nach dem Logout
   };
 
   return (
@@ -23,7 +23,13 @@ const Navbar = ({ user }) => {
           <>
             <span style={{ marginRight: '10px' }}>Willkommen, {user.email}</span>
             <button
-              style={{ color: '#fff', backgroundColor: '#555', padding: '5px 10px', border: 'none', cursor: 'pointer' }}
+              style={{
+                color: '#fff',
+                backgroundColor: '#555',
+                padding: '5px 10px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
               onClick={handleLogout}
             >
               Logout
@@ -32,14 +38,28 @@ const Navbar = ({ user }) => {
         ) : (
           <>
             <button
-              style={{ marginLeft: '10px', color: '#fff', backgroundColor: '#555', padding: '5px 10px', border: 'none', cursor: 'pointer' }}
-              onClick={() => router.push('src/app/auth/login')}
+              style={{
+                marginLeft: '10px',
+                color: '#fff',
+                backgroundColor: '#555',
+                padding: '5px 10px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onClick={() => router.push('/auth/login')} // Korrigierter Pfad
             >
               Login
             </button>
             <button
-              style={{ marginLeft: '10px', color: '#fff', backgroundColor: '#555', padding: '5px 10px', border: 'none', cursor: 'pointer' }}
-              onClick={() => router.push('src/app/auth/register')}
+              style={{
+                marginLeft: '10px',
+                color: '#fff',
+                backgroundColor: '#555',
+                padding: '5px 10px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onClick={() => router.push('/auth/register')} // Korrigierter Pfad
             >
               Register
             </button>
