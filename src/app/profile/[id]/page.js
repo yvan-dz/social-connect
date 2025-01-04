@@ -8,7 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { onAuthStateChanged } from "firebase/auth";
 
 export default function ProfilePage({ params }) {
-  const { id } = params; // Benutzer-ID aus der URL
+  const [id, setId] = useState(""); // Benutzer-ID
   const [profile, setProfile] = useState(null);
   const [name, setName] = useState("");
   const [bio, setBio] = useState("");
@@ -19,6 +19,19 @@ export default function ProfilePage({ params }) {
 
   // Firebase Storage initialisieren
   const storage = getStorage();
+
+  // Benutzer-ID aus params extrahieren
+  useEffect(() => {
+    const resolveParams = async () => {
+      try {
+        const resolvedParams = await params; // Promise auflösen
+        setId(resolvedParams.id);
+      } catch (err) {
+        console.error("Fehler beim Entpacken von params:", err);
+      }
+    };
+    resolveParams();
+  }, [params]);
 
   // Authentifizierten Benutzer überprüfen
   useEffect(() => {
@@ -34,6 +47,8 @@ export default function ProfilePage({ params }) {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        if (!id) return;
+
         const docRef = doc(db, "users", id);
         const docSnap = await getDoc(docRef);
 
@@ -51,7 +66,7 @@ export default function ProfilePage({ params }) {
       }
     };
 
-    if (id) fetchProfile();
+    fetchProfile();
   }, [id]);
 
   const handleUpdate = async () => {
@@ -60,7 +75,6 @@ export default function ProfilePage({ params }) {
 
       let updatedPhotoURL = photoURL;
       if (newPhoto) {
-        // Profilbild hochladen
         const photoRef = ref(storage, `profiles/${id}`);
         await uploadBytes(photoRef, newPhoto);
         updatedPhotoURL = await getDownloadURL(photoRef);
@@ -135,7 +149,21 @@ export default function ProfilePage({ params }) {
         Profil aktualisieren
       </button>
       <button
-        onClick={() => router.push(`/feed`)} // Weiterleitung zur "Meine Posts"-Seite
+        onClick={() => router.push("/posts/create")}
+        style={{
+          width: "100%",
+          padding: "10px",
+          backgroundColor: "#007BFF",
+          color: "#fff",
+          border: "none",
+          cursor: "pointer",
+          marginBottom: "10px",
+        }}
+      >
+        Neuen Beitrag erstellen
+      </button>
+      <button
+        onClick={() => router.push("/feed")}
         style={{
           width: "100%",
           padding: "10px",

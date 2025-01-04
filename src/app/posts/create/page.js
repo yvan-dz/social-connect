@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { auth, db } from "../../../firebase"; // Firebase-Instanzen importieren
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../../../firebase"; // Firebase Storage
+import { auth, db } from "../../../firebase";
+import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 
 export default function CreatePostPage() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState(null);
+  const [imageURL, setImageURL] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
@@ -20,29 +18,34 @@ export default function CreatePostPage() {
     setIsLoading(true);
 
     try {
-      let imageURL = null;
-
-      if (image) {
-        const imageRef = ref(storage, `posts/${Date.now()}-${image.name}`);
-        const uploadResult = await uploadBytes(imageRef, image);
-        imageURL = await getDownloadURL(uploadResult.ref);
+      // Benutzername aus der `users`-Sammlung abrufen
+      let username = "Unbekannt"; // Standardwert
+      if (auth.currentUser?.uid) {
+        const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
+        if (userDoc.exists()) {
+          username = userDoc.data().name || "Unbekannt";
+        }
       }
 
+      // Post-Daten in Firestore speichern
       const postCollection = collection(db, "posts");
       await addDoc(postCollection, {
         title,
         content,
-        imageURL,
-        authorName: auth.currentUser?.displayName || "Unbekannt",
+        imageURL: imageURL || null, // Optionales Bild
+        username, // Benutzername aus der users-Sammlung
         authorId: auth.currentUser?.uid,
         createdAt: serverTimestamp(),
+        comments: [], // Leeres Array für Kommentare
+        likes: [], // Leeres Array für Likes
+        dislikes: [], // Leeres Array für Dislikes
       });
 
       alert("Post erfolgreich erstellt!");
       setTitle("");
       setContent("");
-      setImage(null);
-      router.push("/"); // Nach erfolgreicher Erstellung zur Startseite weiterleiten
+      setImageURL("");
+      router.push("/"); // Zurück zur Startseite
     } catch (err) {
       setError(err.message);
     } finally {
@@ -52,7 +55,7 @@ export default function CreatePostPage() {
 
   return (
     <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <h1>Neuen Post erstellen</h1>
+      <h1>Neuen Beitrag erstellen</h1>
       <form onSubmit={handlePostSubmit}>
         <div style={{ marginBottom: "10px" }}>
           <label htmlFor="title">Titel:</label>
@@ -81,13 +84,14 @@ export default function CreatePostPage() {
           />
         </div>
         <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="image">Bild (optional):</label>
+          <label htmlFor="imageURL">Bild-URL (optional):</label>
           <input
-            type="file"
-            id="image"
-            accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            style={{ display: "block", marginTop: "5px" }}
+            type="url"
+            id="imageURL"
+            value={imageURL}
+            onChange={(e) => setImageURL(e.target.value)}
+            placeholder="https://example.com/image.jpg"
+            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
         </div>
         <button
