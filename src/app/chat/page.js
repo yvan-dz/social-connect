@@ -1,6 +1,6 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { db, auth } from "../../firebase";
 import {
@@ -17,15 +17,21 @@ import {
 import { onAuthStateChanged } from "firebase/auth";
 
 export default function ChatPage() {
-  const searchParams = useSearchParams();
-  const friendName = searchParams.get("friendName");
-  const friendId = searchParams.get("friendId");
-
+  const router = useRouter();
   const [user, setUser] = useState(null);
+  const [friendName, setFriendName] = useState("");
+  const [friendId, setFriendId] = useState("");
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState("");
   const [editingMessage, setEditingMessage] = useState(null);
   const [editingText, setEditingText] = useState("");
+
+  // URL-Parameter lesen
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search);
+    setFriendName(queryParams.get("friendName") || "Unbekannt");
+    setFriendId(queryParams.get("friendId") || "");
+  }, []);
 
   // Benutzer prüfen
   useEffect(() => {
