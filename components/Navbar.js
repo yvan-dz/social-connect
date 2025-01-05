@@ -92,6 +92,19 @@ const Navbar = () => {
             </button>
             <button
               style={{
+                marginRight: "10px",
+                color: "#fff",
+                backgroundColor: "#007BFF",
+                padding: "5px 10px",
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => router.push("/chatlist")}
+            >
+              Chat
+            </button>
+            <button
+              style={{
                 color: "#fff",
                 backgroundColor: "#555",
                 padding: "5px 10px",
