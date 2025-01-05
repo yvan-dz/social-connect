@@ -140,22 +140,45 @@ export default function FriendsPage() {
   // Gesendete Freundschaftsanfragen abrufen
   useEffect(() => {
     if (!user) return;
-
-    const sentQuery = query(
+  
+    const friendsQuery = query(
       collection(db, "friendships"),
-      where("senderId", "==", user.uid),
-      where("status", "==", "pending")
+      where("status", "==", "accepted"),
+      where("receiverId", "in", [user.uid, null]) // Nutzer als senderId oder receiverId berücksichtigen
     );
-
-    const unsubscribe = onSnapshot(sentQuery, (snapshot) => {
-      const requests = snapshot.docs
-        ? snapshot.docs.map((doc) => doc.data().receiverId)
-        : [];
-      setSentRequests(requests);
+  
+    const unsubscribe = onSnapshot(friendsQuery, async (snapshot) => {
+      const friendsData = await Promise.all(
+        snapshot.docs.map(async (document) => {
+          try {
+            const data = document.data();
+            const friendId =
+              data.senderId === user.uid ? data.receiverId : data.senderId;
+            if (!friendId) throw new Error("Friend ID fehlt.");
+  
+            const friendRef = doc(db, "users", friendId);
+            const friendDoc = await getDoc(friendRef);
+            const friendName = friendDoc.exists()
+              ? friendDoc.data().name
+              : "Unbekannt";
+  
+            return {
+              id: document.id,
+              friendName,
+              friendId,
+            };
+          } catch (error) {
+            console.error("Fehler beim Abrufen eines Freundes:", error);
+            return null;
+          }
+        })
+      );
+      setFriends(friendsData.filter((f) => f !== null));
     });
-
+  
     return () => unsubscribe();
   }, [user]);
+  
 
   // Freundschaftsanfrage senden
   const sendFriendRequest = async (receiverId) => {
@@ -197,9 +220,30 @@ export default function FriendsPage() {
   const handleFriendRequest = async (requestId, newStatus) => {
     try {
       const requestRef = doc(db, "friendships", requestId);
+      const requestDoc = await getDoc(requestRef);
+  
+      if (!requestDoc.exists()) {
+        throw new Error("Die Anfrage existiert nicht.");
+      }
+  
+      const requestData = requestDoc.data();
+  
+      // Status aktualisieren
       await updateDoc(requestRef, {
         status: newStatus,
       });
+  
+      if (newStatus === "accepted") {
+        // Gegenseitige Beziehung hinzufügen
+        const reverseFriendshipRef = collection(db, "friendships");
+        await addDoc(reverseFriendshipRef, {
+          senderId: requestData.receiverId, // Umgekehrte Beziehung
+          receiverId: requestData.senderId,
+          status: "accepted",
+          createdAt: serverTimestamp(),
+        });
+      }
+  
       alert(
         `Anfrage wurde ${
           newStatus === "accepted" ? "angenommen" : "abgelehnt"
@@ -209,6 +253,8 @@ export default function FriendsPage() {
       console.error("Fehler beim Beantworten der Anfrage:", err);
     }
   };
+  
+  
 
   // Freundschaft entfernen
   const removeFriend = async (friendId) => {
