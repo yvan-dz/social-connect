@@ -44,3 +44,59 @@
     color: #dfe3ee;
   }
   
+  /* Media Queries */
+  
+  /* iPhone SE (bis 320px Breite) */
+  @media only screen and (max-width: 320px) {
+    .footer {
+      padding: 15px;
+      font-size: 0.8rem; /* Kleinere Schriftgröße */
+      
+    }
+  
+    .footer-icons a {
+      font-size: 1.2rem; /* Kleinere Icons */
+      gap: 10px; /* Weniger Abstand zwischen Icons */
+    }
+  }
+  
+  /* iPhone 6/7/8 (bis 375px Breite) */
+  @media only screen and (max-width: 375px) {
+    .footer {
+      padding: 18px;
+      font-size: 0.85rem; /* Etwas kleinere Schriftgröße */
+    }
+  
+    .footer-icons a {
+      font-size: 1.3rem;
+    }
+  }
+  
+  /* iPhone Plus und neuere Modelle (bis 480px Breite) */
+  @media only screen and (max-width: 480px) {
+    .footer {
+      padding: 20px;
+      font-size: 0.9rem; /* Standard-Schriftgröße */
+    }
+  
+    .footer-icons {
+      gap: 12px; /* Leicht reduzierter Abstand zwischen Icons */
+    }
+  
+    .footer-icons a {
+      font-size: 1.4rem;
+    }
+  }
+  
+  /* Allgemeine Anpassungen für Mobilgeräte */
+  @media only screen and (max-width: 768px) {
+    .footer {
+      font-size: 0.9rem; /* Standard-Schriftgröße für Tablets */
+      padding: 20px 10px;
+    }
+  
+    .footer-icons {
+      gap: 15px; /* Standard-Abstand für größere Mobilgeräte */
+    }
+  }
+  

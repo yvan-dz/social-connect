@@ -1,11 +1,28 @@
-/* Login Container */
-.login-container {
+/* Globales Styling */
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Der Body nimmt mindestens die gesamte Höhe des Viewports ein */
+  }
+  
+  main {
+    flex: 1; /* Main füllt den verfügbaren Platz zwischen Header und Footer */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Zentriert den Login-Container vertikal und horizontal */
+  }
+  
+  /* Login Container */
+  .login-container {
     padding: 20px;
     max-width: 400px;
-    margin: 50px auto;
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Volle Breite für kleinere Bildschirme */
+    box-sizing: border-box; /* Bezieht Padding und Border in die Breite mit ein */
   }
   
   /* Login Titel */
@@ -82,21 +99,9 @@
   }
   
   /* Responsiveness */
-  @media (max-width: 480px) {
-    .login-container {
-      padding: 15px;
-    }
   
-    .login-title {
-      font-size: 1.8rem;
-    }
-  
-    .login-button {
-      padding: 10px;
-    }
-  }
   /* iPhone SE (bis 320px Breite) */
-@media only screen and (max-width: 320px) {
+  @media only screen and (max-width: 320px) {
     .login-container {
       padding: 15px;
       margin: 30px auto;
@@ -163,7 +168,7 @@
   @media only screen and (max-width: 480px) {
     .login-container {
       max-width: 90%;
-      margin: 50px auto;
+      margin: 60px auto;
       padding: 25px;
     }
   
