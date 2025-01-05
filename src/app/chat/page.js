@@ -27,7 +27,7 @@ export default function ChatPage() {
   const [editingMessage, setEditingMessage] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-  // Benutzer überprüfen
+  // Benutzer prüfen
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -49,10 +49,12 @@ export default function ChatPage() {
     const messagesQuery = collection(db, "chats", chatId, "messages");
 
     const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-      const messagesData = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const messagesData = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .sort((a, b) => a.createdAt?.toMillis() - b.createdAt?.toMillis());
       setMessages(messagesData);
     });
 
@@ -132,7 +134,6 @@ export default function ChatPage() {
                 textAlign: msg.senderId === user.uid ? "right" : "left",
               }}
             >
-             
               {editingMessage === msg.id ? (
                 <div>
                   <input
