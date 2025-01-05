@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
+import { deleteField } from "firebase/firestore";
+
 import {
   collection,
   query,
@@ -64,37 +66,55 @@ export default function Home() {
   }, []);
 
   // Like/Dislike-Handler
-  const handleVote = async (postId, type) => {
-    if (!user) {
-      alert("Bitte melde dich an, um zu voten.");
-      return;
-    }
+  // Like/Dislike-Handler
+const handleVote = async (postId, type) => {
+  if (!user) {
+    alert("Bitte melde dich an, um zu voten.");
+    return;
+  }
 
-    const postRef = doc(db, "posts", postId);
-    const userId = user.uid;
+  const postRef = doc(db, "posts", postId);
+  const userId = user.uid;
 
-    try {
-      const postSnapshot = await getDoc(postRef);
-      const postData = postSnapshot.data();
+  try {
+    const postSnapshot = await getDoc(postRef);
+    const postData = postSnapshot.data();
 
-      const likes = postData.likes || [];
-      const dislikes = postData.dislikes || [];
+    const likes = postData.likes || {};
+    const dislikes = postData.dislikes || {};
 
-      if (type === "like" && !likes.includes(userId)) {
+    if (type === "like") {
+      // Benutzer hat noch nicht geliked
+      if (!likes[userId]) {
         await updateDoc(postRef, {
-          likes: arrayUnion(userId),
-          dislikes: arrayRemove(userId),
+          [`likes.${userId}`]: true,
+          [`dislikes.${userId}`]: deleteField(), // Entferne Dislike, falls vorhanden
         });
-      } else if (type === "dislike" && !dislikes.includes(userId)) {
+      } else {
+        // Benutzer möchte den Like entfernen
         await updateDoc(postRef, {
-          dislikes: arrayUnion(userId),
-          likes: arrayRemove(userId),
+          [`likes.${userId}`]: deleteField(),
         });
       }
-    } catch (err) {
-      console.error("Fehler beim Abstimmen:", err);
+    } else if (type === "dislike") {
+      // Benutzer hat noch nicht disliked
+      if (!dislikes[userId]) {
+        await updateDoc(postRef, {
+          [`dislikes.${userId}`]: true,
+          [`likes.${userId}`]: deleteField(), // Entferne Like, falls vorhanden
+        });
+      } else {
+        // Benutzer möchte das Dislike entfernen
+        await updateDoc(postRef, {
+          [`dislikes.${userId}`]: deleteField(),
+        });
+      }
     }
-  };
+  } catch (err) {
+    console.error("Fehler beim Abstimmen:", err);
+  }
+};
+
 
   // Kommentar hinzufügen
   const handleComment = async (postId) => {
@@ -192,19 +212,20 @@ export default function Home() {
                     : "Unbekannt"}
                 </p>
                 <div className="post-actions">
-                  <button
-                    className="like-button"
-                    onClick={() => handleVote(post.id, "like")}
-                  >
-                    👍 {post.likes?.length || 0}
-                  </button>
-                  <button
-                    className="dislike-button"
-                    onClick={() => handleVote(post.id, "dislike")}
-                  >
-                    👎 {post.dislikes?.length || 0}
-                  </button>
-                </div>
+  <button
+    className="like-button"
+    onClick={() => handleVote(post.id, "like")}
+  >
+    👍 {Object.keys(post.likes || {}).length}
+  </button>
+  <button
+    className="dislike-button"
+    onClick={() => handleVote(post.id, "dislike")}
+  >
+    👎 {Object.keys(post.dislikes || {}).length}
+  </button>
+</div>
+
                 <div className="comments-section">
                   <h4>Kommentare:</h4>
                   <ul className="comments-list">
