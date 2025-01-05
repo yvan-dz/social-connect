@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { auth } from "../../../firebase"; // Import der Firebase-Konfiguration
+import { auth } from "../../../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import "@/styles/register.css"; // Importiere das CSS
 
 export default function Register() {
   const [email, setEmail] = useState("");
@@ -18,51 +19,41 @@ export default function Register() {
       alert("Registrierung erfolgreich!");
       router.push("/auth/login"); // Weiterleitung zur Login-Seite nach erfolgreicher Registrierung
     } catch (err) {
-      setError(err.message);
+      setError("Fehler bei der Registrierung. Bitte versuchen Sie es erneut.");
     }
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
-      <h1>Registrieren</h1>
-      <form onSubmit={handleRegister}>
-        <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="email">E-Mail:</label>
+    <div className="register-container">
+      <h1 className="register-title">Registrieren</h1>
+      <form className="register-form" onSubmit={handleRegister}>
+        <div className="register-input-group">
+          <label htmlFor="email" className="register-label">E-Mail:</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            className="register-input"
           />
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="password">Passwort:</label>
+        <div className="register-input-group">
+          <label htmlFor="password" className="register-label">Passwort:</label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            className="register-input"
           />
         </div>
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#333",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <button type="submit" className="register-button">
           Registrieren
         </button>
       </form>
-      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+      {error && <p className="register-error">{error}</p>}
     </div>
   );
 }

@@ -3,8 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { db, auth } from "../../firebase";
-import '@/styles/global.css';
-
+import "@/styles/chat.css"; // Importiere das CSS
 
 import {
   collection,
@@ -29,14 +28,12 @@ export default function ChatPage() {
   const [editingMessage, setEditingMessage] = useState(null);
   const [editingText, setEditingText] = useState("");
 
-  // URL-Parameter lesen
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search);
     setFriendName(queryParams.get("friendName") || "Unbekannt");
     setFriendId(queryParams.get("friendId") || "");
   }, []);
 
-  // Benutzer prüfen
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
@@ -50,11 +47,10 @@ export default function ChatPage() {
     return () => unsubscribe();
   }, []);
 
-  // Nachrichten abrufen
   useEffect(() => {
     if (!user || !friendId) return;
 
-    const chatId = [user.uid, friendId].sort().join("_"); // Chat-ID erstellen
+    const chatId = [user.uid, friendId].sort().join("_");
     const messagesQuery = collection(db, "chats", chatId, "messages");
 
     const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
@@ -70,7 +66,6 @@ export default function ChatPage() {
     return () => unsubscribe();
   }, [user, friendId]);
 
-  // Nachricht senden
   const sendMessage = async () => {
     if (!messageText.trim() || !user || !friendId) return;
 
@@ -89,7 +84,6 @@ export default function ChatPage() {
     }
   };
 
-  // Nachricht bearbeiten
   const editMessage = async (messageId) => {
     const chatId = [user.uid, friendId].sort().join("_");
 
@@ -105,7 +99,6 @@ export default function ChatPage() {
     }
   };
 
-  // Nachricht löschen
   const deleteMessage = async (messageId) => {
     const chatId = [user.uid, friendId].sort().join("_");
 
@@ -118,55 +111,30 @@ export default function ChatPage() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <h1>
+    <div className="chat-container">
+      <h1 className="chat-title">
         Chat: {user?.displayName} 🤝 {friendName}
       </h1>
-      <div
-        style={{
-          border: "1px solid #ddd",
-          padding: "10px",
-          borderRadius: "5px",
-          marginBottom: "10px",
-          maxHeight: "400px",
-          overflowY: "auto",
-        }}
-      >
+      <div className="chat-messages">
         {messages.length === 0 ? (
-          <p>Keine Nachrichten.</p>
+          <p className="chat-empty">Keine Nachrichten.</p>
         ) : (
           messages.map((msg) => (
             <div
               key={msg.id}
-              style={{
-                marginBottom: "10px",
-                textAlign: msg.senderId === user.uid ? "right" : "left",
-              }}
+              className={`chat-message ${
+                msg.senderId === user.uid ? "chat-message-sender" : "chat-message-receiver"
+              }`}
             >
               {editingMessage === msg.id ? (
-                <div>
+                <div className="chat-edit">
                   <input
                     type="text"
                     value={editingText}
                     onChange={(e) => setEditingText(e.target.value)}
-                    style={{
-                      margin: "5px 0",
-                      padding: "5px",
-                      border: "1px solid #ddd",
-                      borderRadius: "5px",
-                    }}
+                    className="chat-edit-input"
                   />
-                  <button
-                    onClick={() => editMessage(msg.id)}
-                    style={{
-                      padding: "5px",
-                      backgroundColor: "#4CAF50",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
-                  >
+                  <button onClick={() => editMessage(msg.id)} className="chat-edit-save">
                     Speichern
                   </button>
                   <button
@@ -174,64 +142,30 @@ export default function ChatPage() {
                       setEditingMessage(null);
                       setEditingText("");
                     }}
-                    style={{
-                      padding: "5px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                      marginLeft: "5px",
-                    }}
+                    className="chat-edit-cancel"
                   >
                     Abbrechen
                   </button>
                 </div>
               ) : (
-                <p
-                  style={{
-                    margin: "5px 0",
-                    backgroundColor: msg.senderId === user.uid ? "#4CAF50" : "#007BFF",
-                    color: "white",
-                    display: "inline-block",
-                    padding: "10px",
-                    borderRadius: "10px",
-                    maxWidth: "70%",
-                    wordWrap: "break-word",
-                  }}
-                >
+                <p>
                   {msg.senderName}: {msg.text}
                 </p>
               )}
               {msg.senderId === user.uid && (
-                <div>
+                <div className="chat-actions">
                   <button
                     onClick={() => {
                       setEditingMessage(msg.id);
                       setEditingText(msg.text);
                     }}
-                    style={{
-                      marginRight: "10px",
-                      padding: "5px",
-                      backgroundColor: "#FFA500",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
+                    className="chat-action-edit"
                   >
                     Bearbeiten
                   </button>
                   <button
                     onClick={() => deleteMessage(msg.id)}
-                    style={{
-                      padding: "5px",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
+                    className="chat-action-delete"
                   >
                     Löschen
                   </button>
@@ -241,31 +175,15 @@ export default function ChatPage() {
           ))
         )}
       </div>
-      <div style={{ display: "flex" }}>
+      <div className="chat-input">
         <input
           type="text"
           value={messageText}
           onChange={(e) => setMessageText(e.target.value)}
           placeholder="Nachricht schreiben..."
-          style={{
-            flex: 1,
-            padding: "10px",
-            border: "1px solid #ddd",
-            borderRadius: "5px",
-            marginRight: "10px",
-          }}
+          className="chat-input-field"
         />
-        <button
-          onClick={sendMessage}
-          style={{
-            padding: "10px",
-            border: "none",
-            backgroundColor: "#007BFF",
-            color: "white",
-            borderRadius: "5px",
-            cursor: "pointer",
-          }}
-        >
+        <button onClick={sendMessage} className="chat-input-send">
           Senden
         </button>
       </div>

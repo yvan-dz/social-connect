@@ -1,0 +1,199 @@
+/* Container */
+.chat-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: 40px auto; /* Mehr Abstand oben und unten */
+    background-color: #f5f6f8; /* Leichtes Grau */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Titel */
+  .chat-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #1877f2; /* Facebook-Blau */
+    margin-bottom: 20px;
+  }
+  
+  /* Keine Freunde gefunden */
+  .chat-empty {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  /* Chat-Liste */
+  .chat-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    background-color: #fff;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
+  }
+  
+  .chat-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: scale(1.02);
+  }
+  
+  /* Freund-Name */
+  .chat-friend-name {
+    margin: 0;
+    font-size: 1rem;
+    color: #333;
+  }
+  
+  /* Chat-Button */
+  .chat-button {
+    padding: 5px 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #007BFF; /* Facebook-Blau */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .chat-button:hover {
+    background-color: #0056b3; /* Dunkleres Blau */
+    transform: scale(1.05);
+  }
+  
+  .chat-button:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Zusätzlicher Abstand zwischen Container und Header/Footer */
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  
+  main {
+    flex: 1;
+    margin-top: 40px; /* Abstand zum Header */
+    margin-bottom: 40px; /* Abstand zum Footer */
+  }
+  /* iPhone SE (bis 320px Breite) */
+@media only screen and (max-width: 320px) {
+    .chat-container {
+      padding: 10px;
+      margin: 20px auto;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+  
+    .chat-title {
+      font-size: 1.5rem; /* Kleinere Schriftgröße */
+      margin-bottom: 15px;
+    }
+  
+    .chat-item {
+      padding: 8px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+    }
+  
+    .chat-friend-name {
+      font-size: 0.9rem; /* Kleinere Schrift */
+    }
+  
+    .chat-button {
+      padding: 4px 8px; /* Kompaktere Buttons */
+      font-size: 0.85rem;
+    }
+  }
+  
+  /* iPhone 6/7/8 (bis 375px Breite) */
+  @media only screen and (max-width: 375px) {
+    .chat-container {
+      padding: 15px;
+      margin: 30px auto;
+      border-radius: 8px;
+    }
+  
+    .chat-title {
+      font-size: 1.8rem;
+      margin-bottom: 18px;
+    }
+  
+    .chat-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+  
+    .chat-friend-name {
+      font-size: 1rem;
+    }
+  
+    .chat-button {
+      padding: 5px 10px;
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* iPhone Plus und neuere Modelle (bis 480px Breite) */
+  @media only screen and (max-width: 480px) {
+    .chat-container {
+      padding: 20px;
+      margin: 35px auto;
+      border-radius: 10px;
+    }
+  
+    .chat-title {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+  
+    .chat-item {
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+    }
+  
+    .chat-friend-name {
+      font-size: 1.1rem;
+    }
+  
+    .chat-button {
+      padding: 6px 12px;
+      font-size: 1rem;
+    }
+  }
+  
+  /* Allgemeine Anpassungen für Mobilgeräte */
+  @media only screen and (max-width: 768px) {
+    .chat-container {
+      width: 100%;
+      margin: 0 auto;
+      border-radius: 0;
+    }
+  
+    .chat-title {
+      text-align: center;
+      font-size: 1.6rem;
+    }
+  
+    .chat-item {
+      flex-direction: column; /* Elemente untereinander bei Platzmangel */
+      align-items: flex-start;
+    }
+  
+    .chat-button {
+      width: 100%; /* Button füllt den gesamten Platz aus */
+      margin-top: 10px;
+    }
+  }
+  

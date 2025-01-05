@@ -1,0 +1,369 @@
+/* Allgemeiner Container */
+.container {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+    background-color: #f5f6f8; /* Leichtes Grau für Hintergrund */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Überschriften */
+  h1 {
+    font-size: 2rem;
+    text-align: center;
+    color: #1877f2; /* Facebook-Blau */
+    margin-bottom: 20px;
+  }
+  
+  h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #333;
+  }
+  
+  /* Benutzerliste */
+  .user-list ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .user-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .user-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .user-item img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  
+  .user-item div {
+    flex: 1;
+  }
+  
+  .user-item p {
+    margin: 0;
+  }
+  
+  .user-item p.name {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .user-item p.email {
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .user-item .send-button {
+    background-color: #1877f2; /* Facebook-Blau */
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .user-item .send-button:hover {
+    background-color: #145db3;
+  }
+  
+  /* Freundschaftsanfragen */
+  .friend-requests .request-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  
+  .request-item p {
+    margin: 0;
+  }
+  
+  .request-item .accept-button {
+    background-color: #42b72a; /* Facebook-Grün */
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .request-item .accept-button:hover {
+    background-color: #36a420;
+  }
+  
+  .request-item .decline-button {
+    background-color: #f44336;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .request-item .decline-button:hover {
+    background-color: #d32f2f;
+  }
+  
+  /* Freundesliste */
+  .friends-list .friend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  
+  .friend-item p {
+    margin: 0;
+  }
+  
+  .friend-item .remove-button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease;
+  }
+  
+  .friend-item .remove-button:hover {
+    background-color: #cc0000;
+  }
+  
+  /* Hinweise */
+  .no-data {
+    text-align: center;
+    font-size: 1rem;
+    color: #777;
+    margin-top: 20px;
+  }
+  
+  .welcome-message {
+    text-align: center;
+    margin-top: 30px;
+  }
+  
+  .welcome-message p {
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 600px) {
+    .user-item,
+    .request-item,
+    .friend-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .user-item img,
+    .request-item img {
+      margin-bottom: 10px;
+    }
+  
+    .user-item .send-button,
+    .request-item .accept-button,
+    .request-item .decline-button,
+    .friend-item .remove-button {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+    }
+  }
+  /* iPhone SE (bis 320px Breite) */
+@media only screen and (max-width: 320px) {
+    .container {
+      padding: 15px;
+      margin: 20px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  
+    h1 {
+      font-size: 1.6rem; /* Kleinere Schriftgröße */
+      margin-bottom: 15px;
+    }
+  
+    h3 {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+    }
+  
+    .user-item,
+    .request-item,
+    .friend-item {
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .user-item img,
+    .request-item img {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 10px;
+    }
+  
+    .send-button,
+    .accept-button,
+    .decline-button,
+    .remove-button {
+      width: 100%; /* Button über die gesamte Breite */
+      text-align: center;
+      font-size: 0.85rem;
+      padding: 10px;
+    }
+  
+    .no-data {
+      font-size: 0.9rem;
+      margin-top: 15px;
+    }
+  }
+  
+  /* iPhone 6/7/8 (bis 375px Breite) */
+  @media only screen and (max-width: 375px) {
+    .container {
+      padding: 20px;
+      margin: 30px auto;
+      border-radius: 10px;
+    }
+  
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 18px;
+    }
+  
+    h3 {
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+    }
+  
+    .user-item,
+    .request-item,
+    .friend-item {
+      padding: 15px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+    }
+  
+    .user-item img,
+    .request-item img {
+      width: 45px;
+      height: 45px;
+      margin-right: 10px;
+    }
+  
+    .send-button,
+    .accept-button,
+    .decline-button,
+    .remove-button {
+      width: auto;
+      padding: 10px 15px;
+      font-size: 0.9rem;
+    }
+  }
+  
+  /* iPhone Plus und neuere Modelle (bis 480px Breite) */
+  @media only screen and (max-width: 480px) {
+    .container {
+      max-width: 95%;
+      margin: 30px auto;
+      padding: 25px;
+    }
+  
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+  
+    h3 {
+      font-size: 1.5rem;
+    }
+  
+    .user-item,
+    .request-item,
+    .friend-item {
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 12px;
+    }
+  
+    .user-item img,
+    .request-item img {
+      width: 50px;
+      height: 50px;
+    }
+  
+    .send-button,
+    .accept-button,
+    .decline-button,
+    .remove-button {
+      font-size: 1rem;
+      padding: 12px 20px;
+    }
+  }
+  
+  /* Allgemeine Anpassungen für Mobilgeräte */
+  @media only screen and (max-width: 768px) {
+    .container {
+      padding: 20px;
+    }
+  
+    .user-item,
+    .request-item,
+    .friend-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .user-item img,
+    .request-item img {
+      margin-bottom: 10px;
+    }
+  
+    .send-button,
+    .accept-button,
+    .decline-button,
+    .remove-button {
+      width: 100%;
+      text-align: center;
+      margin-top: 10px;
+    }
+  }
+  

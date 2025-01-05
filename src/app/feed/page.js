@@ -13,6 +13,7 @@ import {
   updateDoc,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import "@/styles/myPosts.css"; // Import der CSS-Datei
 
 export default function MyPostsPage() {
   const [posts, setPosts] = useState([]);
@@ -90,82 +91,51 @@ export default function MyPostsPage() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
-      <h1>Meine Posts</h1>
+    <div className="my-posts-container">
+      <h1 className="my-posts-title">Meine Posts</h1>
       {posts.length === 0 ? (
-        <p>Du hast noch keine Beiträge erstellt.</p>
+        <p className="my-posts-empty">Du hast noch keine Beiträge erstellt.</p>
       ) : (
         posts.map((post) => (
-          <div
-            key={post.id}
-            style={{
-              marginBottom: "20px",
-              padding: "15px",
-              border: "1px solid #ddd",
-              borderRadius: "5px",
-            }}
-          >
+          <div key={post.id} className="post-item">
             {editingPost === post.id ? (
               <>
                 <input
                   type="text"
                   value={updatedTitle}
                   onChange={(e) => setUpdatedTitle(e.target.value)}
-                  style={{ width: "100%", padding: "8px", marginBottom: "10px" }}
+                  className="edit-input"
                 />
                 <textarea
                   value={updatedContent}
                   onChange={(e) => setUpdatedContent(e.target.value)}
-                  style={{
-                    width: "100%",
-                    padding: "8px",
-                    marginBottom: "10px",
-                    height: "100px",
-                  }}
+                  className="edit-textarea"
                 />
                 <button
                   onClick={handleSave}
-                  style={{
-                    padding: "10px",
-                    backgroundColor: "#28a745",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                    marginRight: "10px",
-                  }}
+                  className="save-button"
                 >
                   Speichern
                 </button>
                 <button
                   onClick={() => setEditingPost(null)}
-                  style={{
-                    padding: "10px",
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+                  className="cancel-button"
                 >
                   Abbrechen
                 </button>
               </>
             ) : (
               <>
-                <h2>{post.title}</h2>
-                <p>{post.content}</p>
+                <h2 className="post-title">{post.title}</h2>
+                <p className="post-content">{post.content}</p>
                 {post.imageURL && (
                   <img
                     src={post.imageURL}
                     alt="Post-Bild"
-                    style={{
-                      width: "100%",
-                      maxHeight: "300px",
-                      objectFit: "cover",
-                      marginTop: "10px",
-                    }}
+                    className="post-image"
                   />
                 )}
-                <p style={{ color: "#555", fontSize: "12px" }}>
+                <p className="post-date">
                   Gepostet am{" "}
                   {post.createdAt?.seconds
                     ? new Date(post.createdAt.seconds * 1000).toLocaleString()
@@ -173,26 +143,13 @@ export default function MyPostsPage() {
                 </p>
                 <button
                   onClick={() => handleEdit(post)}
-                  style={{
-                    padding: "10px",
-                    backgroundColor: "#007bff",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                    marginRight: "10px",
-                  }}
+                  className="edit-button"
                 >
                   Bearbeiten
                 </button>
                 <button
                   onClick={() => handleDelete(post.id)}
-                  style={{
-                    padding: "10px",
-                    backgroundColor: "#dc3545",
-                    color: "#fff",
-                    border: "none",
-                    cursor: "pointer",
-                  }}
+                  className="delete-button"
                 >
                   Löschen
                 </button>

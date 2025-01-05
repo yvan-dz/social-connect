@@ -1,0 +1,211 @@
+/* Login Container */
+.login-container {
+    padding: 20px;
+    max-width: 400px;
+    margin: 50px auto;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Login Titel */
+  .login-title {
+    font-size: 2rem;
+    color: #1877f2;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Login Formular */
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Eingabegruppen */
+  .login-input-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  /* Labels */
+  .login-label {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+  
+  /* Eingabefelder */
+  .login-input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .login-input:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 5px rgba(24, 119, 242, 0.5);
+    outline: none;
+  }
+  
+  /* Login Button */
+  .login-button {
+    width: 100%;
+    padding: 10px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1877f2;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .login-button:hover {
+    background-color: #145db3;
+    transform: scale(1.02);
+  }
+  
+  /* Fehlermeldung */
+  .login-error {
+    margin-top: 10px;
+    color: #f44336;
+    font-size: 0.9rem;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 480px) {
+    .login-container {
+      padding: 15px;
+    }
+  
+    .login-title {
+      font-size: 1.8rem;
+    }
+  
+    .login-button {
+      padding: 10px;
+    }
+  }
+  /* iPhone SE (bis 320px Breite) */
+@media only screen and (max-width: 320px) {
+    .login-container {
+      padding: 15px;
+      margin: 30px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+  
+    .login-title {
+      font-size: 1.6rem; /* Kleinere Schriftgröße */
+      margin-bottom: 15px;
+    }
+  
+    .login-form {
+      gap: 10px; /* Weniger Abstand zwischen Feldern */
+    }
+  
+    .login-label {
+      font-size: 0.9rem;
+    }
+  
+    .login-input {
+      padding: 8px;
+      font-size: 0.9rem;
+    }
+  
+    .login-button {
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+  
+    .login-error {
+      font-size: 0.8rem;
+    }
+  }
+  
+  /* iPhone 6/7/8 (bis 375px Breite) */
+  @media only screen and (max-width: 375px) {
+    .login-container {
+      padding: 20px;
+      margin: 40px auto;
+    }
+  
+    .login-title {
+      font-size: 1.8rem;
+      margin-bottom: 18px;
+    }
+  
+    .login-form {
+      gap: 12px;
+    }
+  
+    .login-input {
+      padding: 10px;
+      font-size: 0.95rem;
+    }
+  
+    .login-button {
+      font-size: 1rem;
+      padding: 12px;
+    }
+  }
+  
+  /* iPhone Plus und neuere Modelle (bis 480px Breite) */
+  @media only screen and (max-width: 480px) {
+    .login-container {
+      max-width: 90%;
+      margin: 50px auto;
+      padding: 25px;
+    }
+  
+    .login-title {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+  
+    .login-form {
+      gap: 15px;
+    }
+  
+    .login-input {
+      padding: 12px;
+      font-size: 1rem;
+    }
+  
+    .login-button {
+      font-size: 1rem;
+      padding: 12px 15px;
+    }
+  }
+  
+  /* Allgemeine Anpassungen für Mobilgeräte */
+  @media only screen and (max-width: 768px) {
+    .login-container {
+      max-width: 90%;
+    }
+  
+    .login-title {
+      text-align: center;
+      font-size: 1.9rem;
+    }
+  
+    .login-input {
+      font-size: 1rem;
+      padding: 10px;
+    }
+  
+    .login-button {
+      font-size: 1rem;
+      padding: 12px 20px;
+    }
+  }
+  

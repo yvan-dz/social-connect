@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { auth, db } from "../../../firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import "@/styles/profile.css"; // Importiere das CSS
 
 export default function ProfilePage() {
   const [id, setId] = useState(""); // Benutzer-ID
@@ -15,7 +16,6 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const router = useRouter();
 
-  // Benutzer-Authentifizierung prüfen
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
@@ -28,7 +28,6 @@ export default function ProfilePage() {
     return () => unsubscribe();
   }, [router]);
 
-  // Benutzerprofil aus Firestore abrufen
   useEffect(() => {
     const fetchProfile = async () => {
       if (!id) return;
@@ -42,7 +41,7 @@ export default function ProfilePage() {
           setProfile(data);
           setName(data.name || "");
           setBio(data.bio || "");
-          setPhotoURL(data.photoURL || ""); // Falls kein Profilbild vorhanden
+          setPhotoURL(data.photoURL || "");
         } else {
           setError("Profil nicht gefunden.");
         }
@@ -54,7 +53,6 @@ export default function ProfilePage() {
     fetchProfile();
   }, [id]);
 
-  // Profil aktualisieren
   const handleUpdate = async () => {
     try {
       const docRef = doc(db, "users", id);
@@ -62,7 +60,7 @@ export default function ProfilePage() {
       await updateDoc(docRef, {
         name,
         bio,
-        photoURL, // Direkt den Link speichern
+        photoURL,
       });
 
       alert("Profil erfolgreich aktualisiert!");
@@ -80,77 +78,51 @@ export default function ProfilePage() {
   }
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
+    <div className="profile-container">
       <h1>Benutzerprofil</h1>
-      <div style={{ textAlign: "center", marginBottom: "20px" }}>
+      <div className="profile-picture-section">
         <img
           src={photoURL || "/default-profile.png"}
           alt="Profilbild"
-          style={{ width: "150px", height: "150px", borderRadius: "50%" }}
+          className="profile-picture"
         />
         <input
           type="url"
           placeholder="Profilbild-URL eingeben"
           value={photoURL}
           onChange={(e) => setPhotoURL(e.target.value)}
-          style={{ display: "block", marginTop: "10px", width: "100%", padding: "8px" }}
+          className="profile-input"
         />
       </div>
-      <div style={{ marginBottom: "10px" }}>
+      <div className="profile-input-group">
         <label>Name:</label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+          className="profile-input"
         />
       </div>
-      <div style={{ marginBottom: "10px" }}>
+      <div className="profile-input-group">
         <label>Bio:</label>
         <textarea
           value={bio}
           onChange={(e) => setBio(e.target.value)}
-          style={{ width: "100%", padding: "8px", marginTop: "5px", height: "100px" }}
+          className="profile-textarea"
         />
       </div>
-      <button
-        onClick={handleUpdate}
-        style={{
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#333",
-          color: "#fff",
-          border: "none",
-          cursor: "pointer",
-          marginBottom: "10px",
-        }}
-      >
+      <button onClick={handleUpdate} className="profile-button primary">
         Profil aktualisieren
       </button>
       <button
-        onClick={() => router.push("/posts/create")} // Weiterleitung zur Post-Erstellung
-        style={{
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#007BFF",
-          color: "#fff",
-          border: "none",
-          cursor: "pointer",
-          marginBottom: "10px",
-        }}
+        onClick={() => router.push("/posts/create")}
+        className="profile-button secondary"
       >
         Neuen Beitrag erstellen
       </button>
       <button
-        onClick={() => router.push("/feed")} // Weiterleitung zur "Meine Posts"-Seite
-        style={{
-          width: "100%",
-          padding: "10px",
-          backgroundColor: "#555",
-          color: "#fff",
-          border: "none",
-          cursor: "pointer",
-        }}
+        onClick={() => router.push("/feed")}
+        className="profile-button tertiary"
       >
         Meine Beiträge anzeigen
       </button>

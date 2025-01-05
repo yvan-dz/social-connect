@@ -5,6 +5,7 @@ import { db, auth } from "../../firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import { collection, query, where, onSnapshot, getDoc, doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import "@/styles/chatList.css"; // Importiere das CSS
 
 export default function ChatList() {
   const [user, setUser] = useState(null);
@@ -60,37 +61,19 @@ export default function ChatList() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <h1>ChatListe</h1>
+    <div className="chat-container">
+      <h1 className="chat-title">ChatListe</h1>
       {friends.length === 0 ? (
-        <p>Keine Freunde gefunden.</p>
+        <p className="chat-empty">Keine Freunde gefunden.</p>
       ) : (
         friends.map((friend) => (
-          <div
-            key={friend.friendId}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "10px",
-              border: "1px solid #ddd",
-              borderRadius: "5px",
-              marginBottom: "10px",
-            }}
-          >
-            <p style={{ margin: 0 }}>
+          <div key={friend.friendId} className="chat-item">
+            <p className="chat-friend-name">
               <strong>{friend.friendName}</strong>
             </p>
             <button
+              className="chat-button"
               onClick={() => startChat(friend)}
-              style={{
-                padding: "5px 10px",
-                border: "none",
-                backgroundColor: "#007BFF",
-                color: "white",
-                borderRadius: "5px",
-                cursor: "pointer",
-              }}
             >
               Chat
             </button>

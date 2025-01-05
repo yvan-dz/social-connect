@@ -14,7 +14,7 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
-import "@/styles/global.css";
+
 import "@/styles/home.css";
 
 export default function Home() {
@@ -167,86 +167,76 @@ export default function Home() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
+    <div className="container">
       {user ? (
         <>
           <h1>Beiträge</h1>
           {posts.length === 0 ? (
-            <p>Keine Beiträge verfügbar.</p>
+            <p className="no-posts">Keine Beiträge verfügbar.</p>
           ) : (
             posts.map((post) => (
-              <div
-                key={post.id}
-                style={{
-                  marginBottom: "20px",
-                  padding: "15px",
-                  border: "1px solid #ddd",
-                  borderRadius: "5px",
-                }}
-              >
-                <h2>{post.title}</h2>
-                <p>{post.content}</p>
+              <div key={post.id} className="post">
+                <h2 className="post-title">{post.title}</h2>
+                <p className="post-content">{post.content}</p>
                 {post.imageURL && (
                   <img
                     src={post.imageURL}
                     alt="Post-Bild"
-                    style={{
-                      width: "100%",
-                      maxHeight: "300px",
-                      objectFit: "cover",
-                      marginTop: "10px",
-                      borderRadius: "5px",
-                    }}
+                    className="post-image"
                   />
                 )}
-                <p style={{ color: "#555", fontSize: "12px" }}>
+                <p className="post-meta">
                   Ersteller: <strong>{post.authorName}</strong> | Erstellt am:{" "}
                   {post.createdAt?.seconds
                     ? new Date(post.createdAt.seconds * 1000).toLocaleString()
                     : "Unbekannt"}
                 </p>
-                <div>
-                  <button onClick={() => handleVote(post.id, "like")}>
+                <div className="post-actions">
+                  <button
+                    className="like-button"
+                    onClick={() => handleVote(post.id, "like")}
+                  >
                     👍 {post.likes?.length || 0}
                   </button>
-                  <button onClick={() => handleVote(post.id, "dislike")}>
+                  <button
+                    className="dislike-button"
+                    onClick={() => handleVote(post.id, "dislike")}
+                  >
                     👎 {post.dislikes?.length || 0}
                   </button>
                 </div>
-                <div>
+                <div className="comments-section">
                   <h4>Kommentare:</h4>
-                  <ul>
+                  <ul className="comments-list">
                     {post.comments?.map((comment, index) => (
-                      <li key={index} style={{ marginBottom: "10px" }}>
-                        <div style={{ display: "flex", alignItems: "center" }}>
+                      <li key={index} className="comment">
+                        <div className="comment-wrapper">
                           {comment.profileImage && (
                             <img
                               src={comment.profileImage}
                               alt="Profilbild"
-                              style={{
-                                width: "40px",
-                                height: "40px",
-                                borderRadius: "50%",
-                                marginRight: "10px",
-                              }}
+                              className="comment-image"
                             />
                           )}
-                          <div>
+                          <div className="comment-content">
                             <strong>{comment.username}</strong>
                             {editComment === comment.createdAt ? (
                               <input
                                 type="text"
                                 value={updatedCommentText}
-                                onChange={(e) => setUpdatedCommentText(e.target.value)}
-                                style={{ marginLeft: "10px" }}
+                                onChange={(e) =>
+                                  setUpdatedCommentText(e.target.value)
+                                }
+                                className="comment-edit-input"
                               />
                             ) : (
                               <p>{comment.text}</p>
                             )}
                           </div>
                           {comment.userId === user.uid && (
-                            <div style={{ marginLeft: "auto", cursor: "pointer" }}>
+                            <div className="comment-actions">
                               <button
+                                className="edit-button"
                                 onClick={() =>
                                   editComment
                                     ? handleEditComment(post.id, comment)
@@ -255,33 +245,49 @@ export default function Home() {
                               >
                                 ✏️
                               </button>
-                              <button onClick={() => handleDeleteComment(post.id, comment)}>🗑️</button>
+                              <button
+                                className="delete-button"
+                                onClick={() =>
+                                  handleDeleteComment(post.id, comment)
+                                }
+                              >
+                                🗑️
+                              </button>
                             </div>
                           )}
                         </div>
                       </li>
                     ))}
                   </ul>
-                  <input
-                    type="text"
-                    value={commentText[post.id] || ""}
-                    onChange={(e) =>
-                      setCommentText((prev) => ({
-                        ...prev,
-                        [post.id]: e.target.value,
-                      }))
-                    }
-                    placeholder="Einen Kommentar schreiben..."
-                  />
-                  <button onClick={() => handleComment(post.id)}>Senden</button>
+                  <div className="comment-input-wrapper">
+                    <input
+                      type="text"
+                      value={commentText[post.id] || ""}
+                      onChange={(e) =>
+                        setCommentText((prev) => ({
+                          ...prev,
+                          [post.id]: e.target.value,
+                        }))
+                      }
+                      className="comment-input"
+                      placeholder="Einen Kommentar schreiben..."
+                    />
+                    <button
+                      className="send-button"
+                      onClick={() => handleComment(post.id)}
+                    >
+                      Senden
+                    </button>
+                  </div>
                 </div>
               </div>
             ))
           )}
         </>
       ) : (
-        <p>Bitte melde dich an.</p>
+        <p className="not-logged-in">Bitte melde dich an.</p>
       )}
     </div>
   );
+  
 }

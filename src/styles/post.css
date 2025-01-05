@@ -1,0 +1,197 @@
+/* Container */
+.post-container {
+    padding: 20px;
+    max-width: 600px;
+    margin: auto;
+    background-color: #f5f6f8; /* Leichtes Grau für den Hintergrund */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e3e3e3; /* Optional: Leichte Umrandung für Kontrast */
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Abstand zwischen den Elementen */
+  }
+  
+  .post-title {
+    font-size: 2rem;
+    text-align: center;
+    color: #1877f2; /* Facebook-Blau */
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  /* Formular */
+  .post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Einheitlicher Abstand zwischen Formularfeldern */
+    width: 100%; /* Formular füllt den Container aus */
+  }
+  
+  /* Formulargruppen */
+  .post-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Abstand zwischen Label und Eingabefeld */
+  }
+  
+  .post-form-group label {
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .post-form-group input,
+  .post-form-group textarea {
+    width: 100%; /* Füllt den verfügbaren Platz aus */
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .post-form-group input:focus,
+  .post-form-group textarea:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 5px rgba(24, 119, 242, 0.5);
+    outline: none;
+  }
+  
+  textarea {
+    height: 120px; /* Größere Standardhöhe */
+    resize: vertical; /* Benutzer kann die Höhe anpassen */
+  }
+  
+  /* Button */
+  .post-submit-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1877f2; /* Facebook-Blau */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .post-submit-button:disabled {
+    background-color: #888;
+    cursor: not-allowed;
+  }
+  
+  .post-submit-button:hover:not(:disabled) {
+    background-color: #145db3; /* Dunkleres Blau */
+    transform: scale(1.02); /* Leichter Zoom-Effekt */
+  }
+  
+  /* Fehlermeldung */
+  .post-error-message {
+    color: #f44336; /* Rotes Fehlertext */
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+  
+  /* Zusatz: Platzhalter-Styling */
+  .post-form-group input::placeholder,
+  .post-form-group textarea::placeholder {
+    color: #aaa; /* Helleres Grau für Platzhalter */
+    font-style: italic;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 600px) {
+    .post-container {
+      padding: 15px;
+    }
+  
+    .post-title {
+      font-size: 1.8rem; /* Kleinere Schriftgröße auf mobilen Geräten */
+    }
+  
+    .post-submit-button {
+      padding: 10px;
+    }
+  }
+  /* Optimierte Media Queries */
+@media (max-width: 768px) {
+    .post-container {
+      padding: 15px;
+      margin: 30px auto;
+      gap: 10px; /* Weniger Abstand zwischen den Elementen */
+    }
+  
+    .post-title {
+      font-size: 1.8rem;
+      margin-bottom: 15px;
+    }
+  
+    .post-form-group label {
+      font-size: 0.95rem;
+    }
+  
+    .post-form-group input,
+    .post-form-group textarea {
+      font-size: 0.95rem;
+      padding: 8px;
+    }
+  
+    .post-submit-button {
+      font-size: 0.95rem;
+      padding: 10px;
+    }
+  
+    .post-error-message {
+      font-size: 0.85rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .post-container {
+      width: 90%;
+      padding: 10px;
+      margin: 20px auto;
+    }
+  
+    .post-title {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+  
+    .post-form {
+      gap: 10px;
+    }
+  
+    .post-form-group {
+      gap: 8px;
+    }
+  
+    .post-form-group label {
+      font-size: 0.9rem;
+    }
+  
+    .post-form-group input,
+    .post-form-group textarea {
+      font-size: 0.9rem;
+      padding: 8px;
+    }
+  
+    textarea {
+      height: 100px; /* Kleinere Standardhöhe */
+    }
+  
+    .post-submit-button {
+      font-size: 0.9rem;
+      padding: 10px 15px;
+    }
+  
+    .post-error-message {
+      font-size: 0.8rem;
+      margin-top: 5px;
+    }
+  }
+  

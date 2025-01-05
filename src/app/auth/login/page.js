@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { auth } from "../../../firebase"; // Import der Firebase-Konfiguration
+import { auth } from "../../../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+import "@/styles/login.css"; // Importiere das CSS
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,51 +19,41 @@ export default function Login() {
       alert("Login erfolgreich!");
       router.push("/"); // Weiterleitung zur Startseite nach Login
     } catch (err) {
-      setError(err.message);
+      setError("Fehler beim Anmelden. Bitte überprüfen Sie Ihre Daten.");
     }
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "400px", margin: "auto" }}>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="email">E-Mail:</label>
+    <div className="login-container">
+      <h1 className="login-title">Login</h1>
+      <form className="login-form" onSubmit={handleLogin}>
+        <div className="login-input-group">
+          <label htmlFor="email" className="login-label">E-Mail:</label>
           <input
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            className="login-input"
           />
         </div>
-        <div style={{ marginBottom: "10px" }}>
-          <label htmlFor="password">Passwort:</label>
+        <div className="login-input-group">
+          <label htmlFor="password" className="login-label">Passwort:</label>
           <input
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
+            className="login-input"
           />
         </div>
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: "#333",
-            color: "#fff",
-            border: "none",
-            cursor: "pointer",
-          }}
-        >
+        <button type="submit" className="login-button">
           Anmelden
         </button>
       </form>
-      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+      {error && <p className="login-error">{error}</p>}
     </div>
   );
 }

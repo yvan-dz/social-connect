@@ -4,6 +4,7 @@ import { useState } from "react";
 import { auth, db } from "../../../firebase";
 import { collection, addDoc, serverTimestamp, doc, getDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
+import "@/styles/post.css"; // Importiere das CSS
 
 export default function CreatePostPage() {
   const [title, setTitle] = useState("");
@@ -18,8 +19,7 @@ export default function CreatePostPage() {
     setIsLoading(true);
 
     try {
-      // Benutzername aus der `users`-Sammlung abrufen
-      let username = "Unbekannt"; // Standardwert
+      let username = "Unbekannt";
       if (auth.currentUser?.uid) {
         const userDoc = await getDoc(doc(db, "users", auth.currentUser.uid));
         if (userDoc.exists()) {
@@ -27,25 +27,24 @@ export default function CreatePostPage() {
         }
       }
 
-      // Post-Daten in Firestore speichern
       const postCollection = collection(db, "posts");
       await addDoc(postCollection, {
         title,
         content,
-        imageURL: imageURL || null, // Optionales Bild
-        username, // Benutzername aus der users-Sammlung
+        imageURL: imageURL || null,
+        username,
         authorId: auth.currentUser?.uid,
         createdAt: serverTimestamp(),
-        comments: [], // Leeres Array für Kommentare
-        likes: [], // Leeres Array für Likes
-        dislikes: [], // Leeres Array für Dislikes
+        comments: [],
+        likes: [],
+        dislikes: [],
       });
 
       alert("Post erfolgreich erstellt!");
       setTitle("");
       setContent("");
       setImageURL("");
-      router.push("/"); // Zurück zur Startseite
+      router.push("/");
     } catch (err) {
       setError(err.message);
     } finally {
@@ -54,10 +53,10 @@ export default function CreatePostPage() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "600px", margin: "auto" }}>
-      <h1>Neuen Beitrag erstellen</h1>
-      <form onSubmit={handlePostSubmit}>
-        <div style={{ marginBottom: "10px" }}>
+    <div className="post-container">
+      <h1 className="post-title">Neuen Beitrag erstellen</h1>
+      <form className="post-form" onSubmit={handlePostSubmit}>
+        <div className="post-form-group">
           <label htmlFor="title">Titel:</label>
           <input
             type="text"
@@ -65,25 +64,18 @@ export default function CreatePostPage() {
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             required
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
         </div>
-        <div style={{ marginBottom: "10px" }}>
+        <div className="post-form-group">
           <label htmlFor="content">Inhalt:</label>
           <textarea
             id="content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             required
-            style={{
-              width: "100%",
-              padding: "8px",
-              marginTop: "5px",
-              height: "100px",
-            }}
           />
         </div>
-        <div style={{ marginBottom: "10px" }}>
+        <div className="post-form-group">
           <label htmlFor="imageURL">Bild-URL (optional):</label>
           <input
             type="url"
@@ -91,25 +83,13 @@ export default function CreatePostPage() {
             value={imageURL}
             onChange={(e) => setImageURL(e.target.value)}
             placeholder="https://example.com/image.jpg"
-            style={{ width: "100%", padding: "8px", marginTop: "5px" }}
           />
         </div>
-        <button
-          type="submit"
-          style={{
-            width: "100%",
-            padding: "10px",
-            backgroundColor: isLoading ? "#888" : "#333",
-            color: "#fff",
-            border: "none",
-            cursor: isLoading ? "not-allowed" : "pointer",
-          }}
-          disabled={isLoading}
-        >
+        <button className="post-submit-button" type="submit" disabled={isLoading}>
           {isLoading ? "Wird erstellt..." : "Post erstellen"}
         </button>
       </form>
-      {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
+      {error && <p className="post-error-message">{error}</p>}
     </div>
   );
 }

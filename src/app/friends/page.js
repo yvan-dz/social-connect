@@ -15,6 +15,7 @@ import {
   serverTimestamp,
   getDoc,
 } from "firebase/firestore";
+import "@/styles/friend.css"; // CSS importieren
 
 export default function FriendsPage() {
   const [user, setUser] = useState(null);
@@ -23,7 +24,6 @@ export default function FriendsPage() {
   const [users, setUsers] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
 
-  // Überprüfen, ob der Benutzer eingeloggt ist
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -32,7 +32,6 @@ export default function FriendsPage() {
     return () => unsubscribe();
   }, []);
 
-  // Liste aller Benutzer abrufen
   useEffect(() => {
     const fetchUsers = () => {
       const usersCollection = collection(db, "users");
@@ -55,7 +54,6 @@ export default function FriendsPage() {
     fetchUsers();
   }, []);
 
-  // Freundschaftsanfragen abrufen
   useEffect(() => {
     if (!user) return;
 
@@ -72,7 +70,7 @@ export default function FriendsPage() {
             const data = document.data();
             if (!data.senderId) throw new Error("Sender ID fehlt.");
 
-            const senderRef = doc(db, "users", data.senderId); // Verwende die `doc` Funktion korrekt
+            const senderRef = doc(db, "users", data.senderId);
             const senderDoc = await getDoc(senderRef);
             const senderName = senderDoc.exists()
               ? senderDoc.data().name
@@ -95,7 +93,6 @@ export default function FriendsPage() {
     return () => unsubscribe();
   }, [user]);
 
-  // Freunde abrufen
   useEffect(() => {
     if (!user) return;
 
@@ -137,50 +134,6 @@ export default function FriendsPage() {
     return () => unsubscribe();
   }, [user]);
 
-  // Gesendete Freundschaftsanfragen abrufen
-  useEffect(() => {
-    if (!user) return;
-  
-    const friendsQuery = query(
-      collection(db, "friendships"),
-      where("status", "==", "accepted"),
-      where("receiverId", "in", [user.uid, null]) // Nutzer als senderId oder receiverId berücksichtigen
-    );
-  
-    const unsubscribe = onSnapshot(friendsQuery, async (snapshot) => {
-      const friendsData = await Promise.all(
-        snapshot.docs.map(async (document) => {
-          try {
-            const data = document.data();
-            const friendId =
-              data.senderId === user.uid ? data.receiverId : data.senderId;
-            if (!friendId) throw new Error("Friend ID fehlt.");
-  
-            const friendRef = doc(db, "users", friendId);
-            const friendDoc = await getDoc(friendRef);
-            const friendName = friendDoc.exists()
-              ? friendDoc.data().name
-              : "Unbekannt";
-  
-            return {
-              id: document.id,
-              friendName,
-              friendId,
-            };
-          } catch (error) {
-            console.error("Fehler beim Abrufen eines Freundes:", error);
-            return null;
-          }
-        })
-      );
-      setFriends(friendsData.filter((f) => f !== null));
-    });
-  
-    return () => unsubscribe();
-  }, [user]);
-  
-
-  // Freundschaftsanfrage senden
   const sendFriendRequest = async (receiverId) => {
     if (!receiverId.trim()) {
       alert("Bitte wähle einen Benutzer aus.");
@@ -216,34 +169,31 @@ export default function FriendsPage() {
     }
   };
 
-  // Freundschaftsanfrage beantworten
   const handleFriendRequest = async (requestId, newStatus) => {
     try {
       const requestRef = doc(db, "friendships", requestId);
       const requestDoc = await getDoc(requestRef);
-  
+
       if (!requestDoc.exists()) {
         throw new Error("Die Anfrage existiert nicht.");
       }
-  
+
       const requestData = requestDoc.data();
-  
-      // Status aktualisieren
+
       await updateDoc(requestRef, {
         status: newStatus,
       });
-  
+
       if (newStatus === "accepted") {
-        // Gegenseitige Beziehung hinzufügen
         const reverseFriendshipRef = collection(db, "friendships");
         await addDoc(reverseFriendshipRef, {
-          senderId: requestData.receiverId, // Umgekehrte Beziehung
+          senderId: requestData.receiverId,
           receiverId: requestData.senderId,
           status: "accepted",
           createdAt: serverTimestamp(),
         });
       }
-  
+
       alert(
         `Anfrage wurde ${
           newStatus === "accepted" ? "angenommen" : "abgelehnt"
@@ -253,10 +203,7 @@ export default function FriendsPage() {
       console.error("Fehler beim Beantworten der Anfrage:", err);
     }
   };
-  
-  
 
-  // Freundschaft entfernen
   const removeFriend = async (friendId) => {
     try {
       const friendDoc = friends.find((f) => f.friendId === friendId);
@@ -271,68 +218,31 @@ export default function FriendsPage() {
   };
 
   return (
-    <div style={{ padding: "20px", maxWidth: "800px", margin: "auto" }}>
+    <div className="container">
       {user ? (
         <>
           <h1>Freundschaftsfunktionen</h1>
 
-          {/* Benutzerliste anzeigen */}
-          <div style={{ marginBottom: "20px" }}>
+          <div className="user-list">
             <h3>Vorgeschlagene Nutzer</h3>
             {users.length === 0 ? (
-              <p>Keine Benutzer gefunden.</p>
+              <p className="no-data">Keine Benutzer gefunden.</p>
             ) : (
-              <ul style={{ listStyleType: "none", padding: 0 }}>
+              <ul>
                 {users
                   .filter((u) => u.id !== user.uid)
                   .map((u) => (
-                    <li
-                      key={u.id}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        marginBottom: "10px",
-                        padding: "10px",
-                        border: "1px solid #ddd",
-                        borderRadius: "5px",
-                      }}
-                    >
+                    <li key={u.id} className="user-item">
                       {u.photoURL && (
-                        <img
-                          src={u.photoURL}
-                          alt="Profilbild"
-                          style={{
-                            width: "40px",
-                            height: "40px",
-                            borderRadius: "50%",
-                            marginRight: "10px",
-                          }}
-                        />
+                        <img src={u.photoURL} alt="Profilbild" />
                       )}
-                      <div style={{ flex: 1 }}>
-                        <p style={{ margin: 0, fontWeight: "bold" }}>
-                          {u.name || "Unbekannt"}
-                        </p>
-                        <p
-                          style={{
-                            margin: 0,
-                            fontSize: "12px",
-                            color: "#555",
-                          }}
-                        >
-                          {u.email}
-                        </p>
+                      <div>
+                        <p className="name">{u.name || "Unbekannt"}</p>
+                        <p className="email">{u.email}</p>
                       </div>
                       <button
+                        className="send-button"
                         onClick={() => sendFriendRequest(u.id)}
-                        style={{
-                          padding: "5px 10px",
-                          border: "none",
-                          backgroundColor: "#007BFF",
-                          color: "white",
-                          borderRadius: "5px",
-                          cursor: "pointer",
-                        }}
                       >
                         Anfrage senden
                       </button>
@@ -342,49 +252,25 @@ export default function FriendsPage() {
             )}
           </div>
 
-          {/* Freundschaftsanfragen anzeigen */}
-          <div style={{ marginBottom: "20px" }}>
+          <div className="friend-requests">
             <h3>Freundschaftsanfragen</h3>
             {friendRequests.length === 0 ? (
-              <p>Keine ausstehenden Anfragen.</p>
+              <p className="no-data">Keine ausstehenden Anfragen.</p>
             ) : (
               friendRequests.map((request) => (
-                <div
-                  key={request.id}
-                  style={{
-                    marginBottom: "10px",
-                    padding: "10px",
-                    border: "1px solid #ddd",
-                    borderRadius: "5px",
-                  }}
-                >
+                <div key={request.id} className="request-item">
                   <p>
                     Anfrage von: <strong>{request.senderName}</strong>
                   </p>
                   <button
+                    className="accept-button"
                     onClick={() => handleFriendRequest(request.id, "accepted")}
-                    style={{
-                      marginRight: "10px",
-                      padding: "5px 10px",
-                      border: "none",
-                      backgroundColor: "#4CAF50",
-                      color: "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
                   >
                     Annehmen
                   </button>
                   <button
+                    className="decline-button"
                     onClick={() => handleFriendRequest(request.id, "declined")}
-                    style={{
-                      padding: "5px 10px",
-                      border: "none",
-                      backgroundColor: "#F44336",
-                      color: "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
                   >
                     Ablehnen
                   </button>
@@ -393,35 +279,19 @@ export default function FriendsPage() {
             )}
           </div>
 
-          {/* Freunde anzeigen */}
-          <div>
+          <div className="friends-list">
             <h3>Meine Freunde</h3>
             {friends.length === 0 ? (
-              <p>Keine Freunde gefunden.</p>
+              <p className="no-data">Keine Freunde gefunden.</p>
             ) : (
               friends.map((friend) => (
-                <div
-                  key={friend.id}
-                  style={{
-                    marginBottom: "10px",
-                    padding: "10px",
-                    border: "1px solid #ddd",
-                    borderRadius: "5px",
-                  }}
-                >
+                <div key={friend.id} className="friend-item">
                   <p>
                     Freund: <strong>{friend.friendName}</strong>
                   </p>
                   <button
+                    className="remove-button"
                     onClick={() => removeFriend(friend.friendId)}
-                    style={{
-                      padding: "5px 10px",
-                      border: "none",
-                      backgroundColor: "#FF0000",
-                      color: "white",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
                   >
                     Entfernen
                   </button>
@@ -431,7 +301,7 @@ export default function FriendsPage() {
           </div>
         </>
       ) : (
-        <div>
+        <div className="welcome-message">
           <h1>Willkommen bei der Freundschaftsfunktion!</h1>
           <p>Bitte registriere dich oder logge dich ein, um loszulegen.</p>
         </div>

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { checkUserSession } from '../firebase'; // Überprüft die Benutzersitzung
 import Navbar from '../../components/Navbar'; // Navbar-Komponente
-import '@/styles/global.css'; // Import der globalen CSS-Datei
+import Footer from '../../components/Footer'; // Footer-Komponente
+import "@/styles/global.css";
 
 function MyApp({ Component, pageProps }) {
   const [user, setUser] = useState(null);
@@ -20,10 +21,16 @@ function MyApp({ Component, pageProps }) {
       {/* Navbar mit Benutzerinformationen */}
       <Navbar user={user} />
       
-      {/* Hauptkomponente */}
-      <main style={{ padding: '20px' }}>
-        <Component {...pageProps} user={user} />
-      </main>
+      {/* Layout-Container für Sticky Footer */}
+      <div className="layout-container">
+        {/* Hauptkomponente */}
+        <main className="main-content">
+          <Component {...pageProps} user={user} />
+        </main>
+        {/* Footer */}
+        
+      </div>
+      <Footer />
     </>
   );
 }

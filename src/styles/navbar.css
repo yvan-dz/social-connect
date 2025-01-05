@@ -1,0 +1,103 @@
+/* Navbar Container */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1877f2; /* Facebook-Blau */
+    color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+  }
+  
+  /* Navbar Brand */
+  .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar-brand:hover {
+    color: #dfe3ee; /* Helleres Blau */
+  }
+  
+  /* Navbar Links Container */
+  .navbar-links {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  /* Buttons in Navbar */
+  .navbar-button {
+    background-color: #f0f2f5;
+    color: #1877f2;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  .navbar-button:hover {
+    background-color: #145db3;
+    color: #fff;
+  }
+  
+  .navbar-chat {
+    background-color: #42b72a; /* Facebook-Grün für Chat */
+    color: #fff;
+  }
+  
+  .navbar-chat:hover {
+    background-color: #36a420;
+  }
+  
+  /* Responsiveness */
+  @media (max-width: 768px) {
+    .navbar {
+      flex-direction: column; /* Navbar-Elemente untereinander platzieren */
+      padding: 10px;
+    }
+  
+    .navbar-brand {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+  
+    .navbar-links {
+      flex-wrap: wrap; /* Links umbrechen, wenn nicht genug Platz */
+      gap: 10px;
+      justify-content: center;
+    }
+  
+    .navbar-button {
+      font-size: 0.85rem;
+      padding: 6px 10px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .navbar {
+      padding: 5px;
+    }
+  
+    .navbar-brand {
+      font-size: 1rem;
+    }
+  
+    .navbar-links {
+      gap: 5px;
+    }
+  
+    .navbar-button {
+      font-size: 0.8rem;
+      padding: 5px 8px;
+    }
+  }
+  

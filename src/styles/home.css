@@ -4,183 +4,321 @@ body {
     font-family: 'Roboto', sans-serif;
     background-color: #e9ebee;
     color: #1c1e21;
-    line-height: 1.6;
+  }
+  
+  .container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 20px auto;
   }
   
   h1 {
     text-align: center;
     font-size: 2.5rem;
+    color: #1877f2;
     margin-bottom: 20px;
-    color: #1877f2; /* Facebook-Blau */
   }
   
-  .container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  .no-posts {
+    text-align: center;
+    color: #555;
+    font-size: 1.2rem;
   }
   
   .post {
-    margin-bottom: 30px;
+    margin-bottom: 20px;
     padding: 20px;
-    border: 1px solid #d3d6db;
+    border: 1px solid #ddd;
     border-radius: 10px;
-    background-color: #ffffff;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
   
   .post:hover {
     transform: translateY(-5px);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
   }
   
-  .post img {
-    width: 100%;
-    border-radius: 10px;
-    margin-top: 15px;
-    object-fit: cover;
-  }
-  
-  .post h2 {
+  .post-title {
     font-size: 1.8rem;
-    color: #1c1e21;
+    color: #333;
     margin-bottom: 10px;
   }
   
-  .post p {
-    color: #4b4f56;
+  .post-content {
+    color: #555;
+    margin-bottom: 10px;
   }
   
-  .post-meta {
-    font-size: 0.9rem;
-    color: #606770;
+  .post-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 10px;
     margin-top: 10px;
   }
   
-  .post-meta strong {
-    color: #1877f2;
+  .post-meta {
+    color: #777;
+    font-size: 0.9rem;
+    margin-top: 10px;
   }
   
   .post-actions {
-    display: flex;
-    gap: 10px;
     margin-top: 15px;
   }
   
-  .post-actions button {
-    border: none;
-    background-color: #1877f2; /* Facebook-Blau */
+  .like-button,
+  .dislike-button {
+    background-color: #1877f2;
     color: #fff;
-    padding: 10px 20px;
+    border: none;
+    padding: 8px 15px;
     border-radius: 5px;
     cursor: pointer;
+    margin-right: 10px;
     font-size: 0.9rem;
-    transition: background-color 0.3s ease;
   }
   
-  .post-actions button:hover {
+  .like-button:hover,
+  .dislike-button:hover {
     background-color: #145db3;
   }
   
-  .comments {
+  .comments-section {
     margin-top: 20px;
-    padding-top: 10px;
-    border-top: 1px solid #d3d6db;
+    border-top: 1px solid #ddd;
+    padding-top: 15px;
   }
   
   .comment {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    align-items: flex-start;
+    margin-bottom: 10px;
   }
   
-  .comment img {
+  .comment-wrapper {
+    display: flex;
+    align-items: center;
+  }
+  
+  .comment-image {
     width: 40px;
     height: 40px;
     border-radius: 50%;
+    margin-right: 10px;
   }
   
-  .comment div {
+  .comment-content {
     flex: 1;
   }
   
-  .comment strong {
-    font-size: 0.9rem;
-    color: #1c1e21;
-  }
-  
-  .comment p {
-    font-size: 0.9rem;
-    color: #4b4f56;
-  }
-  
   .comment-actions {
-    margin-top: 5px;
+    display: flex;
+    gap: 5px;
+    margin-left: auto;
   }
   
-  .comment-actions button {
+  .edit-button,
+  .delete-button {
     background: none;
     border: none;
-    color: #1877f2; /* Facebook-Blau */
-    font-size: 0.8rem;
+    color: #1877f2;
     cursor: pointer;
-    transition: color 0.2s ease;
   }
   
-  .comment-actions button:hover {
+  .edit-button:hover,
+  .delete-button:hover {
     color: #145db3;
   }
   
-  .comment-input {
+  .comment-input-wrapper {
     display: flex;
     gap: 10px;
     margin-top: 15px;
   }
   
-  .comment-input input {
+  .comment-input {
     flex: 1;
     padding: 10px;
-    border: 1px solid #d3d6db;
+    border: 1px solid #ddd;
     border-radius: 5px;
-    font-size: 0.9rem;
   }
   
-  .comment-input input:focus {
+  .comment-input:focus {
     outline: 2px solid #1877f2;
   }
   
-  .comment-input button {
-    background-color: #42b72a; /* Facebook-Grün für "Senden" */
+  .send-button {
+    background-color: #42b72a;
     color: #fff;
     border: none;
     padding: 10px 20px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
   }
   
-  .comment-input button:hover {
+  .send-button:hover {
     background-color: #36a420;
   }
   
-  .footer {
-    margin-top: 30px;
+  .not-logged-in {
     text-align: center;
-    color: #606770;
-    font-size: 0.85rem;
+    font-size: 1.2rem;
+    color: #555;
+  }
+  /* Allgemeine Media Queries für iPhones */
+
+/* iPhone SE (bis 320px Breite) */
+@media only screen and (max-width: 320px) {
+    body {
+      font-size: 0.9rem; /* Kleinere Schriftgröße für besseren Lesefluss */
+    }
+  
+    .container {
+      padding: 10px; /* Weniger Padding */
+      margin: 10px auto;
+    }
+  
+    h1 {
+      font-size: 1.8rem; /* Kleinere Überschrift */
+      margin-bottom: 15px;
+    }
+  
+    .post {
+      padding: 15px; /* Kompaktere Posts */
+    }
+  
+    .post-title {
+      font-size: 1.5rem; /* Kleinere Schriftgröße */
+      margin-bottom: 8px;
+    }
+  
+    .post-content {
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+  
+    .like-button,
+    .dislike-button {
+      padding: 6px 12px; /* Kleinere Buttons */
+      font-size: 0.8rem;
+    }
+  
+    .comment-input-wrapper {
+      flex-direction: column; /* Kommentareingabe untereinander */
+      gap: 5px;
+    }
+  
+    .comment-input {
+      padding: 8px; /* Weniger Padding */
+      font-size: 0.85rem;
+    }
+  
+    .send-button {
+      width: 100%; /* Button über die gesamte Breite */
+      padding: 8px;
+      font-size: 0.9rem;
+    }
   }
   
-  .footer a {
-    color: #1877f2;
-    text-decoration: none;
+  /* Allgemeine iPhones (bis 375px Breite, z. B. iPhone 6/7/8) */
+  @media only screen and (max-width: 375px) {
+    body {
+      font-size: 1rem;
+    }
+  
+    .container {
+      padding: 15px;
+      margin: 15px auto;
+    }
+  
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 18px;
+    }
+  
+    .post {
+      padding: 18px;
+    }
+  
+    .post-title {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+  
+    .post-content {
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+  
+    .like-button,
+    .dislike-button {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+  
+    .comment-input-wrapper {
+      flex-direction: row;
+      gap: 8px;
+    }
+  
+    .comment-input {
+      padding: 10px;
+    }
+  
+    .send-button {
+      padding: 9px 18px;
+      font-size: 0.9rem;
+    }
   }
   
-  .footer a:hover {
-    text-decoration: underline;
+  /* Größere iPhones (bis 480px Breite, z. B. iPhone Plus oder neuere Geräte) */
+  @media only screen and (max-width: 480px) {
+    body {
+      font-size: 1.1rem;
+    }
+  
+    .container {
+      padding: 20px;
+    }
+  
+    h1 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+    }
+  
+    .post {
+      padding: 20px;
+    }
+  
+    .post-title {
+      font-size: 1.7rem;
+      margin-bottom: 12px;
+    }
+  
+    .post-content {
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+  
+    .like-button,
+    .dislike-button {
+      padding: 10px 16px;
+      font-size: 0.9rem;
+    }
+  
+    .comment-input-wrapper {
+      flex-direction: row;
+      gap: 10px;
+    }
+  
+    .comment-input {
+      padding: 12px;
+    }
+  
+    .send-button {
+      padding: 10px 20px;
+      font-size: 1rem;
+    }
   }
   

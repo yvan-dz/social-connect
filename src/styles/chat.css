@@ -1,0 +1,354 @@
+/* Chat Container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 600px;
+    height: calc(100vh - 120px); /* Platz für Header/Footer */
+    margin: 40px auto;
+    border-radius: 10px;
+    background-color: #f9f9f9; /* Helleres Grau für den Hintergrund */
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Chat Title */
+.chat-title {
+    padding: 20px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: bold;
+    background-color: #1877f2; /* Facebook-Blau */
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 3px solid #ddd;
+}
+.chat-title {
+    color: #fff !important; /* Weißer Text mit Priorität */
+}
+
+/* Messages Section */
+.chat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Abstand zwischen Nachrichten */
+    background-color: #fff;
+}
+
+/* Individual Message */
+.chat-message {
+    max-width: 70%;
+    padding: 12px 16px;
+    border-radius: 15px;
+    font-size: 1rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    margin-bottom: 5px;
+}
+
+/* Sender Message */
+.chat-message-sender {
+    align-self: flex-end;
+    background-color: #e4e6eb;
+    color: #333;
+    border-top-right-radius: 5px;
+}
+
+/* Receiver Message */
+.chat-message-receiver {
+    align-self: flex-start;
+    background-color: #d8eaff;
+    color: #333;
+    border-top-left-radius: 5px;
+}
+
+/* Action Buttons */
+.chat-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+.chat-actions button {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Edit Button */
+.chat-action-edit {
+    background-color: #28a745; /* Grün für Bearbeiten */
+    color: #fff;
+}
+
+.chat-action-edit:hover {
+    background-color: #1e7e34;
+    transform: scale(1.05);
+}
+
+/* Delete Button */
+.chat-action-delete {
+    background-color: #dc3545; /* Rot für Löschen */
+    color: #fff;
+}
+
+.chat-action-delete:hover {
+    background-color: #c82333;
+    transform: scale(1.05);
+}
+
+/* Edit Mode */
+.chat-edit {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chat-edit-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    background-color: #fff;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chat-edit-input:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 5px rgba(24, 119, 242, 0.5);
+    outline: none;
+}
+
+.chat-edit-save {
+    background-color: #155724; /* Dunkler Grün */
+    color: white;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.chat-edit-cancel {
+    background-color: #f44336; /* Rot für Abbrechen */
+    color: white;
+    padding: 7px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Input Section */
+.chat-input {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    background-color: #f0f2f5;
+}
+
+.chat-input-field {
+    flex: 1;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 25px;
+    font-size: 1rem;
+    background-color: #fff;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chat-input-field:focus {
+    outline: none;
+    border-color: #1877f2;
+    box-shadow: 0 0 5px rgba(24, 119, 242, 0.5);
+}
+
+.chat-input-send {
+    padding: 10px 25px;
+    margin-left: 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: #1877f2;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.chat-input-send:hover {
+    background-color: #145db3;
+    transform: scale(1.1);
+}
+
+/* Empty Messages */
+.chat-empty {
+    text-align: center;
+    color: #aaa;
+    font-style: italic;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .chat-title {
+        font-size: 1.4rem;
+    }
+
+    .chat-input-field {
+        font-size: 0.9rem;
+    }
+
+    .chat-input-send {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+}
+/* iPhone SE (bis 320px Breite) */
+@media only screen and (max-width: 320px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .chat-title {
+        font-size: 1.2rem; /* Kleinere Schriftgröße */
+        padding: 15px; /* Weniger Padding */
+    }
+
+    .chat-messages {
+        padding: 10px; /* Weniger Padding für Nachrichten */
+        gap: 10px; /* Weniger Abstand zwischen Nachrichten */
+    }
+
+    .chat-message {
+        font-size: 0.85rem; /* Kleinere Schrift */
+        padding: 8px 12px; /* Kompaktere Nachrichten */
+        max-width: 80%; /* Mehr Platz auf kleinen Bildschirmen */
+    }
+
+    .chat-input {
+        padding: 10px; /* Weniger Padding */
+    }
+
+    .chat-input-field {
+        padding: 8px 10px; /* Kleinere Eingabefelder */
+        font-size: 0.85rem;
+    }
+
+    .chat-input-send {
+        padding: 8px 12px; /* Kleinere Buttons */
+        font-size: 0.85rem;
+    }
+
+    .chat-actions button {
+        padding: 5px 8px; /* Kompaktere Buttons */
+        font-size: 0.75rem;
+    }
+}
+
+/* iPhone 6/7/8 (bis 375px Breite) */
+@media only screen and (max-width: 375px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .chat-title {
+        font-size: 1.4rem; /* Kleinere Schriftgröße */
+        padding: 15px;
+    }
+
+    .chat-messages {
+        padding: 12px; /* Leicht kompakter */
+        gap: 12px;
+    }
+
+    .chat-message {
+        font-size: 0.9rem;
+        padding: 10px 14px;
+    }
+
+    .chat-input {
+        padding: 12px;
+    }
+
+    .chat-input-field {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    .chat-input-send {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .chat-actions button {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
+
+/* iPhone Plus und neuere Modelle (bis 480px Breite) */
+@media only screen and (max-width: 480px) {
+    .chat-container {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+    }
+
+    .chat-title {
+        font-size: 1.5rem; /* Größere Schriftgröße */
+        padding: 18px;
+    }
+
+    .chat-messages {
+        padding: 15px;
+        gap: 15px;
+    }
+
+    .chat-message {
+        font-size: 1rem;
+        padding: 12px 16px;
+    }
+
+    .chat-input {
+        padding: 15px;
+    }
+
+    .chat-input-field {
+        padding: 12px 15px;
+        font-size: 1rem;
+    }
+
+    .chat-input-send {
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+
+    .chat-actions button {
+        padding: 7px 12px;
+        font-size: 0.85rem;
+    }
+}

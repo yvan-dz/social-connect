@@ -1,0 +1,177 @@
+/* Container */
+.my-posts-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  .my-posts-title {
+    text-align: center;
+    font-size: 2rem;
+    color: #1877f2; /* Facebook-Blau */
+    margin-bottom: 20px;
+  }
+  
+  .my-posts-empty {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #555;
+  }
+  
+  /* Einzelne Posts */
+  .post-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .post-title {
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .post-content {
+    margin: 10px 0;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .post-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+  
+  .post-date {
+    font-size: 0.9rem;
+    color: #888;
+  }
+  
+  /* Buttons */
+  button {
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  button:hover {
+    transform: scale(1.02);
+  }
+  
+  .edit-button {
+    background-color: #007bff;
+    color: #fff;
+    margin-right: 10px;
+  }
+  
+  .delete-button {
+    background-color: #dc3545;
+    color: #fff;
+  }
+  
+  .save-button {
+    background-color: #28a745;
+    color: #fff;
+    margin-right: 10px;
+  }
+  
+  .cancel-button {
+    background-color: #6c757d;
+    color: #fff;
+  }
+  
+  /* Edit-Modus */
+  .edit-input,
+  .edit-textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .edit-input:focus,
+  .edit-textarea:focus {
+    border-color: #1877f2;
+    box-shadow: 0 0 5px rgba(24, 119, 242, 0.5);
+    outline: none;
+  }
+  /* Responsiveness */
+@media (max-width: 768px) {
+    .my-posts-container {
+        padding: 15px;
+    }
+
+    .my-posts-title {
+        font-size: 1.8rem;
+    }
+
+    .post-item {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    .post-title {
+        font-size: 1.3rem;
+    }
+
+    .post-content {
+        font-size: 0.95rem;
+    }
+
+    .post-image {
+        max-height: 200px;
+    }
+
+    button {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .my-posts-container {
+        padding: 10px;
+    }
+
+    .my-posts-title {
+        font-size: 1.6rem;
+    }
+
+    .post-item {
+        padding: 8px;
+    }
+
+    .post-title {
+        font-size: 1.2rem;
+    }
+
+    .post-content {
+        font-size: 0.85rem;
+    }
+
+    .post-date {
+        font-size: 0.8rem;
+    }
+
+    button {
+        font-size: 0.85rem;
+        padding: 6px;
+    }
+
+    .edit-input,
+    .edit-textarea {
+        font-size: 0.9rem;
+        padding: 8px;
+    }
+}

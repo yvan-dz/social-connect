@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth"; // Firebase Auth Listener
 import { auth, db } from "../src/firebase"; // Firebase-Instanz
 import { doc, setDoc, getDoc } from "firebase/firestore"; // Firestore-Funktionen
+import "@/styles/navbar.css"; // Importiere das CSS
 
 const Navbar = () => {
   const router = useRouter();
@@ -15,12 +16,10 @@ const Navbar = () => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
-        // Benutzer authentifiziert, Profil in Firestore prüfen
         const userRef = doc(db, "users", currentUser.uid);
         const userDoc = await getDoc(userRef);
 
         if (!userDoc.exists()) {
-          // Benutzerprofil erstellen, falls es nicht existiert
           await setDoc(userRef, {
             name: "Neuer Benutzer",
             email: currentUser.email,
@@ -33,113 +32,58 @@ const Navbar = () => {
       }
     });
 
-    return () => unsubscribe(); // Aufräumen, wenn die Komponente entladen wird
+    return () => unsubscribe();
   }, []);
 
   const handleLogout = async () => {
     await logout();
     alert("Erfolgreich abgemeldet!");
-    router.push("/auth/login"); // Weiterleitung zur Login-Seite nach Logout
+    router.push("/auth/login");
   };
 
   return (
-    <nav
-      style={{
-        padding: "10px",
-        backgroundColor: "#333",
-        color: "#fff",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <div>
-        <h1
-          style={{ margin: 0, cursor: "pointer" }}
-          onClick={() => router.push("/")}
-        >
-          SocialConnect
-        </h1>
+    <nav className="navbar">
+      <div className="navbar-brand" onClick={() => router.push("/")}>
+        SocialConnect
       </div>
-      <div>
+      <div className="navbar-links">
+        <button className="navbar-button" onClick={() => router.push("/")}>
+          Home
+        </button>
         {user ? (
           <>
             <button
-              style={{
-                marginRight: "10px",
-                color: "#fff",
-                backgroundColor: "#555",
-                padding: "5px 10px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="navbar-button"
               onClick={() => router.push(`/profile/${user.uid}`)}
             >
               Profil
             </button>
             <button
-              style={{
-                marginRight: "10px",
-                color: "#fff",
-                backgroundColor: "#555",
-                padding: "5px 10px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="navbar-button"
               onClick={() => router.push("/friends")}
             >
               Freunde
             </button>
             <button
-              style={{
-                marginRight: "10px",
-                color: "#fff",
-                backgroundColor: "#007BFF",
-                padding: "5px 10px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="navbar-button navbar-chat"
               onClick={() => router.push("/chatlist")}
             >
               Chat
             </button>
-            <button
-              style={{
-                color: "#fff",
-                backgroundColor: "#555",
-                padding: "5px 10px",
-                border: "none",
-                cursor: "pointer",
-              }}
-              onClick={handleLogout}
-            >
+            <button className="navbar-button" onClick={handleLogout}>
               Logout
             </button>
           </>
         ) : (
           <>
             <button
-              style={{
-                marginLeft: "10px",
-                color: "#fff",
-                backgroundColor: "#555",
-                padding: "5px 10px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="navbar-button"
               onClick={() => router.push("/auth/login")}
             >
               Login
             </button>
             <button
-              style={{
-                marginLeft: "10px",
-                color: "#fff",
-                backgroundColor: "#555",
-                padding: "5px 10px",
-                border: "none",
-                cursor: "pointer",
-              }}
+              className="navbar-button"
               onClick={() => router.push("/auth/register")}
             >
               Register
