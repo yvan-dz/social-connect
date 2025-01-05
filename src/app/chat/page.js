@@ -3,6 +3,9 @@
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { db, auth } from "../../firebase";
+import '@/styles/global.css';
+
+
 import {
   collection,
   addDoc,

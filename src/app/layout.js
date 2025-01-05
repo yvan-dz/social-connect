@@ -1,6 +1,7 @@
 import Navbar from '../../components/Navbar'; // Korrigierter Pfad zu Navbar
 import Footer from '../../components/Footer'; // Korrigierter Pfad zu Footer
 
+
 export const metadata = {
   title: 'Social Connect',
   description: 'Eine Social Media App mit Next.js',

@@ -3,14 +3,26 @@
 import { useEffect, useState } from "react";
 import { auth, db } from "../firebase";
 import { onAuthStateChanged } from "firebase/auth";
-import { collection, query, onSnapshot, orderBy, doc, updateDoc, getDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import {
+  collection,
+  query,
+  onSnapshot,
+  orderBy,
+  doc,
+  updateDoc,
+  getDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
+import "@/styles/global.css";
+import "@/styles/home.css";
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [commentText, setCommentText] = useState({});
-  const [editComment, setEditComment] = useState(null); // Bearbeitungsmodus
-  const [updatedCommentText, setUpdatedCommentText] = useState(""); // Neuer Kommentartext
+  const [editComment, setEditComment] = useState(null);
+  const [updatedCommentText, setUpdatedCommentText] = useState("");
 
   // Überprüfen, ob der Benutzer eingeloggt ist
   useEffect(() => {
@@ -26,31 +38,30 @@ export default function Home() {
     const fetchPosts = () => {
       const postsCollection = collection(db, "posts");
       const q = query(postsCollection, orderBy("createdAt", "desc"));
-  
+
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         const postsData = await Promise.all(
           snapshot.docs.map(async (postDoc) => {
             const post = postDoc.data();
-            const userRef = doc(db, "users", post.authorId); // Sicherstellen, dass `doc` korrekt verwendet wird
+            const userRef = doc(db, "users", post.authorId);
             const userSnap = await getDoc(userRef);
             const username = userSnap.exists() ? userSnap.data().name : "Unbekannt";
-  
+
             return {
               id: postDoc.id,
               ...post,
-              authorName: username, // username als authorName
+              authorName: username,
             };
           })
         );
         setPosts(postsData);
       });
-  
+
       return () => unsubscribe();
     };
-  
+
     fetchPosts();
   }, []);
-  
 
   // Like/Dislike-Handler
   const handleVote = async (postId, type) => {
@@ -86,42 +97,40 @@ export default function Home() {
   };
 
   // Kommentar hinzufügen
-const handleComment = async (postId) => {
-  if (!user) {
-    alert("Bitte melde dich an, um einen Kommentar zu schreiben.");
-    return;
-  }
-
-  try {
-    const userDoc = await getDoc(doc(db, "users", user.uid));
-    const username = userDoc.exists() && userDoc.data().name ? userDoc.data().name : "Unbekannt";
-    const profileImage = userDoc.exists() && userDoc.data().profileImage ? userDoc.data().profileImage : null;
-
-    if (!commentText[postId] || commentText[postId].trim() === "") {
-      alert("Kommentartext darf nicht leer sein.");
+  const handleComment = async (postId) => {
+    if (!user) {
+      alert("Bitte melde dich an, um einen Kommentar zu schreiben.");
       return;
     }
 
-    const postRef = doc(db, "posts", postId);
-    const comment = {
-      text: commentText[postId].trim(),
-      username,
-      profileImage,
-      userId: user.uid,
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const username = userDoc.exists() && userDoc.data().name ? userDoc.data().name : "Unbekannt";
+      const profileImage = userDoc.exists() && userDoc.data().profileImage ? userDoc.data().profileImage : null;
 
-    await updateDoc(postRef, {
-      comments: arrayUnion(comment),
-    });
+      if (!commentText[postId] || commentText[postId].trim() === "") {
+        alert("Kommentartext darf nicht leer sein.");
+        return;
+      }
 
-    setCommentText((prev) => ({ ...prev, [postId]: "" })); // Kommentar-Feld zurücksetzen
-  } catch (err) {
-    console.error("Fehler beim Hinzufügen eines Kommentars:", err);
-  }
-};
+      const postRef = doc(db, "posts", postId);
+      const comment = {
+        text: commentText[postId].trim(),
+        username,
+        profileImage,
+        userId: user.uid,
+        createdAt: new Date().toISOString(),
+      };
 
-  
+      await updateDoc(postRef, {
+        comments: arrayUnion(comment),
+      });
+
+      setCommentText((prev) => ({ ...prev, [postId]: "" }));
+    } catch (err) {
+      console.error("Fehler beim Hinzufügen eines Kommentars:", err);
+    }
+  };
 
   // Kommentar bearbeiten
   const handleEditComment = async (postId, comment) => {
@@ -196,6 +205,14 @@ const handleComment = async (postId) => {
                     ? new Date(post.createdAt.seconds * 1000).toLocaleString()
                     : "Unbekannt"}
                 </p>
+                <div>
+                  <button onClick={() => handleVote(post.id, "like")}>
+                    👍 {post.likes?.length || 0}
+                  </button>
+                  <button onClick={() => handleVote(post.id, "dislike")}>
+                    👎 {post.dislikes?.length || 0}
+                  </button>
+                </div>
                 <div>
                   <h4>Kommentare:</h4>
                   <ul>
